@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <title>Cursos Disponibles</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --soft-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --text-light: #718096;
+            --star-color: #fbbf24;
+            --star-bg: rgba(255, 255, 255, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+        }
+
+        /* Header */
+        header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        nav a:hover::before,
+        nav a.active::before {
+            left: 0;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Search Section */
+        .search-section {
+            max-width: 1200px;
+            margin: 40px auto 20px;
+            padding: 0 30px;
+        }
+
+        .search-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+            text-align: center;
+            animation: cardFloat 6s ease-in-out infinite;
+        }
+
+        .search-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 16px 24px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            placeholder-color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Container */
+        main {
+            max-width: 1400px;
+            margin: 20px auto 60px;
+            padding: 0 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        /* Course Cards */
+        .course-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+        }
+
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            transition: height 0.3s ease;
+        }
+
+        .course-card:hover::before {
+            height: 6px;
+        }
+
+        .course-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .course-card:hover .course-image {
+            transform: scale(1.05);
+        }
+
+        .course-content {
+            padding: 24px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .stars {
+            display: flex;
+            gap: 2px;
+        }
+
+        .star {
+            width: 18px;
+            height: 18px;
+            fill: var(--star-bg);
+            transition: fill 0.3s ease;
+        }
+
+        .star.filled {
+            fill: var(--star-color);
+        }
+
+        .rating-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .course-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            line-height: 1.3;
+        }
+
+        .course-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            flex-grow: 1;
+            margin-bottom: 20px;
+        }
+
+        .course-button {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 16px;
+            padding: 14px 24px;
+            font-size: 1rem;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .course-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+        }
+
+        .course-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .course-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(102, 126, 234, 0.4);
+        }
+
+        /* No Results */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        .no-results h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .no-results p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Floating animation for cards */
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .search-container {
+            animation: cardFloat 6s ease-in-out infinite;
+            animation-delay: 0s;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            main {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            main {
+                padding: 0 20px;
+                margin: 20px auto 40px;
+                grid-template-columns: 1fr;
+            }
+
+            .search-section {
+                padding: 0 20px;
+                margin: 20px auto;
+            }
+
+            .search-container {
+                padding: 24px;
+            }
+
+            .search-title {
+                font-size: 1.6rem;
+            }
+
+            .course-content {
+                padding: 20px;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-particles"></div>
+    
+    <header>
+        <h1>Certificados</h1>
+        <nav>
+            <a href="Inicio.html">🏠 Inicio</a>
+            <a href="cursos.html" class="active">📚 Cursos</a>
+            <a href="niveles.html">🎯 Niveles</a>
+            <a href="materias.html">📖 Materias</a>
+            <a href="cetificado.html">🏆 Certificados</a>
+        </nav>
+    </header>
+
+    <section class="search-section">
+        <div class="search-container">
+            <h2 class="search-title">🔍 Buscar Certificado</h2>
+            <p class="search-subtitle">Explora nuestra amplia selección de cursos especializados</p>
+            <input type="text" class="search-input" placeholder="Buscar por título, tecnología o tema..." id="search-input" />
+        </div>
+    </section>
+    
+    <main id="courses-container">
+        <!-- Course cards will be injected here -->
+    </main>
+
+    <script>
+        const courses = [
+            { 
+                id: 1, 
+                title: "Introducción a JavaScript", 
+                description: "Aprende los fundamentos de JavaScript desde cero, ideal para principiantes. Domina variables, funciones, eventos y manipulación del DOM.", 
+                image: "https://images.unsplash.com/photo-1581091012184-5b6446cc1184?auto=format&fit=crop&w=600&q=80", 
+                rating: 3.5,
+                category: "Programación"
+            },
+            { 
+                id: 2, 
+                title: "Desarrollo Web con React", 
+                description: "Construye interfaces de usuario dinámicas con React y sus principales herramientas. Aprende hooks, contexto y manejo de estado.", 
+                image: "https://images.unsplash.com/photo-1505682634904-d7c74a0a7185?auto=format&fit=crop&w=600&q=80", 
+                rating: 5.0,
+                category: "Frontend"
+            },
+            { 
+                id: 3, 
+                title: "Python para Ciencia de Datos", 
+                description: "Descubre cómo usar Python y librerías populares para análisis y visualización de datos. Pandas, NumPy, Matplotlib y más.", 
+                image: "https://images.unsplash.com/photo-1537432376769-00a0f1f6c34f?auto=format&fit=crop&w=600&q=80", 
+                rating: 4.2,
+                category: "Data Science"
+            },
+            { 
+                id: 4, 
+                title: "Introducción a Machine Learning", 
+                description: "Conceptos básicos y técnicas fundamentales para iniciarse en Machine Learning. Algoritmos supervisados y no supervisados.", 
+                image: "https://images.unsplash.com/photo-1526378721188-66ddcb7f9564?auto=format&fit=crop&w=600&q=80", 
+                rating: 2.8,
+                category: "IA & ML"
+            },
+            { 
+                id: 5, 
+                title: "Diseño UX/UI Moderno", 
+                description: "Aprende los principios del diseño de experiencia e interfaces para productos digitales. Figma, prototipado y testing.", 
+                image: "https://images.unsplash.com/photo-1542831371-d531d36971e6?auto=format&fit=crop&w=600&q=80", 
+                rating: 4.6,
+                category: "Diseño"
+            },
+            { 
+                id: 6, 
+                title: "Marketing Digital Estratégico", 
+                description: "Domina las técnicas más efectivas para promocionar productos y servicios en línea. SEO, SEM, redes sociales y analytics.", 
+                image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80", 
+                rating: 3.9,
+                category: "Marketing"
+            }
+        ];
+
+        // Create floating particles
+        function createParticles() {
+            const container = document.querySelector('.bg-particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        function createStarIcons(rating) {
+            const starsCount = 5;
+            const starElements = [];
+            const starPath = "M10 15l-5.09 3.42 1.95-5.85L2 9.59l5.92-.05 2.16-6.1 2.15 6.1 5.92.05-4.86 3.98 1.94 5.85z";
+
+            for (let i = 1; i <= starsCount; i++) {
+                const star = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                star.setAttribute("viewBox", "0 0 20 20");
+                star.classList.add('star');
+
+                if (i <= Math.floor(rating)) {
+                    star.classList.add('filled');
+                } else if (i === Math.ceil(rating) && rating % 1 !== 0) {
+                    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+                    const linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
+                    const gradId = `half-gradient-${rating.toString().replace('.', '-')}-${i}`;
+                    linearGradient.setAttribute("id", gradId);
+                    linearGradient.setAttribute("x1", "0%");
+                    linearGradient.setAttribute("y1", "0%");
+                    linearGradient.setAttribute("x2", "100%");
+                    linearGradient.setAttribute("y2", "0%");
+
+                    const stop1 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+                    stop1.setAttribute("offset", "50%");
+                    stop1.setAttribute("stop-color", "var(--star-color)");
+                    stop1.setAttribute("stop-opacity", "1");
+                    linearGradient.appendChild(stop1);
+
+                    const stop2 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+                    stop2.setAttribute("offset", "50%");
+                    stop2.setAttribute("stop-color", "var(--star-bg)");
+                    stop2.setAttribute("stop-opacity", "1");
+                    linearGradient.appendChild(stop2);
+
+                    defs.appendChild(linearGradient);
+                    star.appendChild(defs);
+
+                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    path.setAttribute("fill", `url(#${gradId})`);
+                    path.setAttribute("d", starPath);
+                    star.appendChild(path);
+                    star.classList.add('filled');
+                }
+
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("fill", "currentColor");
+                path.setAttribute("d", starPath);
+                star.appendChild(path);
+
+                starElements.push(star);
+            }
+            return starElements;
+        }
+
+        function renderCourses(filteredCourses) {
+            const container = document.getElementById("courses-container");
+            container.innerHTML = '';
+
+            if (filteredCourses.length === 0) {
+                const noResults = document.createElement("div");
+                noResults.className = "no-results";
+                noResults.innerHTML = `
+                    <div class="no-results-icon">🔍</div>
+                    <h3>No se encontraron certificados</h3>
+                    <p>Intenta con otros términos de búsqueda</p>
+                `;
+                container.appendChild(noResults);
+                return;
+            }
+
+            filteredCourses.forEach((course, index) => {
+                const card = document.createElement("article");
+                card.className = "course-card";
+                card.style.animationDelay = `${index * 0.1}s`;
+
+                const img = document.createElement("img");
+                img.src = course.image;
+                img.alt = `Imagen del curso: ${course.title}`;
+                img.className = "course-image";
+                img.loading = "lazy";
+                card.appendChild(img);
+
+                const content = document.createElement("div");
+                content.className = "course-content";
+
+                // Rating section
+                const ratingDiv = document.createElement("div");
+                ratingDiv.className = "course-rating";
+
+                const starsDiv = document.createElement("div");
+                starsDiv.className = "stars";
+
+                const stars = createStarIcons(course.rating);
+                stars.forEach(star => starsDiv.appendChild(star));
+                ratingDiv.appendChild(starsDiv);
+
+                const ratingText = document.createElement("span");
+                ratingText.className = "rating-text";
+                ratingText.textContent = `${course.rating}/5.0`;
+                ratingDiv.appendChild(ratingText);
+
+                content.appendChild(ratingDiv);
+
+                // Title
+                const title = document.createElement("h2");
+                title.className = "course-title";
+                title.textContent = course.title;
+                content.appendChild(title);
+
+                // Description
+                const desc = document.createElement("p");
+                desc.className = "course-description";
+                desc.textContent = course.description;
+                content.appendChild(desc);
+
+                // Button
+                const btn = document.createElement("button");
+                btn.className = "course-button";
+                btn.innerHTML = `✨ Adquirir Certificado`;
+                btn.addEventListener("click", () => {
+                    btn.innerHTML = `<div class="loading"></div> Procesando...`;
+                    setTimeout(() => {
+                        alert(`¡Felicidades! Has adquirido: ${course.title}`);
+                        btn.innerHTML = `✅ Adquirido`;
+                        btn.style.background = 'var(--soft-gradient)';
+                        btn.style.color = 'var(--text-primary)';
+                    }, 1500);
+                });
+                content.appendChild(btn);
+
+                card.appendChild(content);
+                container.appendChild(card);
+            });
+        }
+
+        function filterCourses() {
+            const searchInput = document.getElementById("search-input");
+            const searchTerm = searchInput.value.toLowerCase();
+            const filteredCourses = courses.filter(course =>
+                course.title.toLowerCase().includes(searchTerm) ||
+                course.description.toLowerCase().includes(searchTerm) ||
+                course.category.toLowerCase().includes(searchTerm)
+            );
+            renderCourses(filteredCourses);
+        }
+
+        // Initialize
+        function init() {
+            createParticles();
+            renderCourses(courses);
+            
+            document.getElementById("search-input").addEventListener("input", filterCourses);
+            
+            // Add parallax effect
+            document.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const parallax = document.querySelector('.bg-particles');
+                const speed = scrolled * 0.3;
+                parallax.style.transform = `translateY(${speed}px)`;
+            });
+        }
+
+        // Start when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>
