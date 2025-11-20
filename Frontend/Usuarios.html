@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Usuarios - Gestión</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@500&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen p-6 font-Roboto">
+  <div class="max-w-4xl mx-auto bg-white rounded shadow p-6">
+    <h1 class="text-2xl font-bold mb-4">Gestión de Usuarios</h1>
+
+    <div class="grid grid-cols-2 gap-6">
+      <!-- Formulario para añadir usuario -->
+      <div>
+        <h2 class="font-semibold mb-2">Crear nuevo usuario</h2>
+        <form id="userForm" class="space-y-3 bg-gray-50 p-4 rounded">
+          <div>
+            <label class="block text-sm">Nombre de usuario</label>
+            <input id="u_username" type="text" class="w-full border p-2 rounded" placeholder="ej. juan" required />
+          </div>
+          <div>
+            <label class="block text-sm">Correo electrónico</label>
+            <input id="u_email" type="email" class="w-full border p-2 rounded" placeholder="correo@ejemplo.com" required />
+          </div>
+          <div>
+            <label class="block text-sm">Contraseña</label>
+            <input id="u_password" type="password" class="w-full border p-2 rounded" placeholder="Contraseña" required />
+          </div>
+          <div class="flex items-center justify-start">
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Agregar usuario</button>
+          </div>
+          <div id="msg" class="text-sm mt-2"></div>
+        </form>
+      </div>
+
+      <!-- Lista de usuarios -->
+      <div>
+        <h2 class="font-semibold mb-2">Usuarios registrados</h2>
+        <div id="usersList" class="space-y-2 bg-gray-50 p-4 rounded max-h-96 overflow-auto"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Utilities: hash simple (no es para producción) - reusar SHA-256 como en Register
+    function buf2hex(buffer) {
+      return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+    }
+    async function hashPassword(password) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password);
+      const hash = await crypto.subtle.digest('SHA-256', data);
+      return buf2hex(hash);
+    }
+
+    function loadUsers() {
+      try { return JSON.parse(localStorage.getItem('users') || '[]'); } catch (e) { return []; }
+    }
+    function saveUsers(users) { localStorage.setItem('users', JSON.stringify(users)); }
+
+    function renderUsers() {
+      const container = document.getElementById('usersList');
+      const users = loadUsers();
+      container.innerHTML = '';
+      if (users.length === 0) {
+        container.textContent = 'No hay usuarios registrados.';
+        return;
+      }
+      users.forEach((u, idx) => {
+        const el = document.createElement('div');
+        el.className = 'p-3 bg-white rounded shadow-sm flex justify-between items-center';
+        el.innerHTML = `<div>
+            <div class="font-medium">${escapeHtml(u.username)}</div>
+            <div class="text-xs text-gray-500">${escapeHtml(u.email)}</div>
+          </div>
+          <div class="text-xs text-gray-400">#${idx+1}</div>`;
+        container.appendChild(el);
+      });
+    }
+
+    // Evitar inyección básica
+    function escapeHtml(s) { return String(s).replace(/[&<>"]/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+
+    document.getElementById('userForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('u_username').value.trim();
+      const email = document.getElementById('u_email').value.trim();
+      const password = document.getElementById('u_password').value;
+      const msg = document.getElementById('msg');
+      msg.textContent = '';
+
+      if (!username || !email || !password) {
+        msg.textContent = 'Todos los campos son obligatorios.';
+        msg.className = 'text-red-600';
+        return;
+      }
+
+      const users = loadUsers();
+      if (users.find(u => u.username === username || u.email === email)) {
+        msg.textContent = 'Ya existe un usuario con ese nombre o correo.';
+        msg.className = 'text-red-600';
+        return;
+      }
+
+      const hashed = await hashPassword(password);
+      users.push({ username, email, passwordHash: hashed });
+      saveUsers(users);
+
+      msg.textContent = 'Usuario agregado correctamente.';
+      msg.className = 'text-green-600';
+      document.getElementById('userForm').reset();
+      renderUsers();
+    });
+
+    // Nota: la opción de borrar usuarios se ha eliminado de la UI para evitar que usuarios normales puedan eliminar cuentas.
+
+    // Al cargar
+    renderUsers();
+  </script>
+</body>
+</html>
