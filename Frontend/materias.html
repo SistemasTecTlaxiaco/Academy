@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <title>Materias</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --soft-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --text-light: #718096;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+        }
+
+        /* Header */
+        header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        nav a:hover::before,
+        nav a.active::before {
+            left: 0;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Container */
+        main {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 30px;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 30px;
+        }
+
+        /* Glass Card Base */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Level Selection Card */
+        .level-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .level-card h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .current-level {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .levels {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .level {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 16px;
+            padding: 16px 20px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--soft-gradient);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .level:hover::before,
+        .level.active::before {
+            left: 0;
+        }
+
+        .level:hover,
+        .level.active {
+            transform: scale(1.05);
+            color: var(--text-primary);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Actions Panel */
+        .actions-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 20px;
+            padding: 20px;
+            font-size: 1.1rem;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+        }
+
+        .action-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-btn:nth-child(2) {
+            background: var(--secondary-gradient);
+            box-shadow: 0 4px 16px rgba(240, 147, 251, 0.3);
+        }
+
+        .action-btn:nth-child(2):hover {
+            box-shadow: 0 8px 28px rgba(240, 147, 251, 0.4);
+        }
+
+        .action-btn:nth-child(3) {
+            background: var(--accent-gradient);
+            box-shadow: 0 4px 16px rgba(79, 172, 254, 0.3);
+        }
+
+        .action-btn:nth-child(3):hover {
+            box-shadow: 0 8px 28px rgba(79, 172, 254, 0.4);
+        }
+
+        .action-btn:nth-child(4) {
+            background: var(--soft-gradient);
+            color: var(--text-primary);
+            box-shadow: 0 4px 16px rgba(168, 237, 234, 0.3);
+        }
+
+        .action-btn:nth-child(4):hover {
+            box-shadow: 0 8px 28px rgba(168, 237, 234, 0.4);
+        }
+
+        /* Progress Info */
+        .progress-info h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 24px;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+        }
+
+        .stat-item span:first-child {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.2rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Subjects List */
+        .subjects {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .subjects h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 24px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subject-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .subject-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(8px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .subject-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.4rem;
+            margin-right: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .subject-details {
+            flex: 1;
+        }
+
+        .subject-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            margin-bottom: 4px;
+        }
+
+        .subject-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .subject-progress {
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .progress-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: white;
+            position: relative;
+            margin: 0 auto 8px;
+        }
+
+        .progress-circle.high {
+            background: conic-gradient(#4ade80 0deg, #4ade80 var(--progress), rgba(255,255,255,0.2) var(--progress));
+        }
+
+        .progress-circle.medium {
+            background: conic-gradient(#fbbf24 0deg, #fbbf24 var(--progress), rgba(255,255,255,0.2) var(--progress));
+        }
+
+        .progress-circle.low {
+            background: conic-gradient(#f87171 0deg, #f87171 var(--progress), rgba(255,255,255,0.2) var(--progress));
+        }
+
+        .progress-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Chart container */
+        .chart-container {
+            grid-column: span 3;
+            margin-top: 40px;
+        }
+
+        .chart-container h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 24px;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            main {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .chart-container {
+                grid-column: span 1;
+                margin-top: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            main {
+                padding: 0 20px;
+                margin: 20px auto;
+            }
+
+            .glass-card {
+                padding: 24px;
+            }
+        }
+
+        /* Floating animation for cards */
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .level-card {
+            animation: cardFloat 6s ease-in-out infinite;
+            animation-delay: 0s;
+        }
+
+        .actions-panel {
+            animation: cardFloat 6s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+
+        .progress-info {
+            animation: cardFloat 6s ease-in-out infinite;
+            animation-delay: 4s;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 24px;
+            width: 80%;
+            max-width: 600px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        .close {
+            color: rgba(255, 255, 255, 0.7);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: -10px;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-particles"></div>
+    
+    <header>
+        <h1>Materias</h1>
+        <nav>
+            <a href="Inicio.html">🏠 Inicio</a>
+            <a href="cursos.html">📚 Cursos</a>
+            <a href="niveles.html" class="active">🎯 Niveles</a>
+            <a href="materias.html">📖 Materias</a>
+            <a href="cetificado.html">🏆 Certificados</a>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="glass-card level-card" aria-label="Level Selection Card">
+            <h2>🎓 Nivel Educativo</h2>
+            <div class="current-level" id="currentLevel">Primaria</div>
+            <div class="levels">
+                <div class="level active" data-level="primaria">🌱 Primaria</div>
+                <div class="level" data-level="secundaria">🌿 Secundaria</div>
+                <div class="level" data-level="medio-superior">🌳 Medio Superior</div>
+                <div class="level" data-level="superior">🏛️ Superior</div>
+            </div>
+        </section>
+        
+        <section class="subjects glass-card" aria-label="Subjects List">
+            <h3 id="subjectsTitle">📚 Materias - Primaria</h3>
+            <div id="subjectsList">
+                <!-- Subjects will be inserted here -->
+            </div>
+        </section>
+        
+        <div class="glass-card">
+            <section class="actions-panel" aria-label="Education Actions">
+                <button class="action-btn" id="studyBtn">📖 Estudiar</button>
+                <button class="action-btn" id="examBtn">📝 Exámenes</button>
+                <button class="action-btn" id="resourcesBtn">💡 Recursos</button>
+                <button class="action-btn" id="progressBtn">📊 Mi Progreso</button>
+            </section>
+            
+            <section class="progress-info" aria-label="Progress Information">
+                <h3>📈 Estadísticas</h3>
+                <div class="progress-stats">
+                    <div class="stat-item">
+                        <span>✅ Materias Completadas</span>
+                        <span class="stat-value" id="completedSubjects">6/8</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>⭐ Promedio General</span>
+                        <span class="stat-value" id="averageGrade">8.8</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🏆 Certificaciones</span>
+                        <span class="stat-value" id="certifications">2</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+       
+    </main>
+
+    <!-- Chart container -->
+    <section class="chart-container glass-card">
+        <h3>📊 Progreso por materia</h3>
+        <canvas id="progressChartCanvas" width="800" height="240"></canvas>
+    </section>
+
+    <!-- Modal -->
+    <div id="actionModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Título</h2>
+            <p id="modalContent">Contenido del modal</p>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const container = document.querySelector('.bg-particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Educational data by levels
+        const educationalData = {
+            primaria: {
+                title: "📚 Materias - Primaria",
+                subjects: [
+                    { name: "Matemáticas", description: "Aritmética básica, sumas, restas y geometría elemental", progress: 95, icon: "🔢" },
+                    { name: "Español", description: "Lectura comprensiva, escritura y gramática básica", progress: 88, icon: "📖" },
+                    { name: "Ciencias Naturales", description: "Exploración del mundo natural y experimentos sencillos", progress: 92, icon: "🔬" },
+                    { name: "Historia", description: "Historias de México y el mundo para niños", progress: 85, icon: "🏛️" },
+                    { name: "Geografía", description: "Continentes, países, capitales y mapas básicos", progress: 78, icon: "🌍" },
+                    { name: "Educación Física", description: "Deportes, juegos y desarrollo motor", progress: 90, icon: "🏃" },
+                    { name: "Educación Artística", description: "Música, danza, dibujo y expresión creativa", progress: 82, icon: "🎨" },
+                    { name: "Educación Cívica", description: "Valores, respeto y convivencia ciudadana", progress: 87, icon: "⚖️" }
+                ],
+                stats: {
+                    completed: "6/8",
+                    average: "8.8",
+                    certifications: "2"
+                }
+            },
+            secundaria: {
+                title: "📚 Materias - Secundaria",
+                subjects: [
+                    { name: "Matemáticas", description: "Álgebra, geometría y introducción al cálculo", progress: 87, icon: "📐" },
+                    { name: "Español", description: "Literatura, análisis de textos y redacción avanzada", progress: 91, icon: "📚" },
+                    { name: "Inglés", description: "Gramática intermedia y conversación básica", progress: 79, icon: "🗣️" },
+                    { name: "Biología", description: "Sistemas del cuerpo humano y ecología", progress: 93, icon: "🧬" },
+                    { name: "Física", description: "Mecánica, electricidad y magnetismo básico", progress: 76, icon: "⚛️" },
+                    { name: "Química", description: "Tabla periódica y reacciones químicas", progress: 84, icon: "🧪" },
+                    { name: "Historia", description: "Historia universal y civilizaciones antiguas", progress: 89, icon: "📜" },
+                    { name: "Geografía", description: "Geografía física, humana y económica", progress: 81, icon: "🗺️" },
+                    { name: "Formación Cívica", description: "Ética, democracia y derechos humanos", progress: 88, icon: "🏛️" }
+                ],
+                stats: {
+                    completed: "7/9",
+                    average: "8.5",
+                    certifications: "3"
+                }
+            },
+            "medio-superior": {
+                title: "📚 Materias - Medio Superior",
+                subjects: [
+                    { name: "Matemáticas IV", description: "Cálculo diferencial e integral aplicado", progress: 82, icon: "∫" },
+                    { name: "Física II", description: "Ondas, óptica y física moderna avanzada", progress: 78, icon: "🌊" },
+                    { name: "Química II", description: "Química orgánica e inorgánica aplicada", progress: 85, icon: "⚗️" },
+                    { name: "Biología II", description: "Genética, evolución y biotecnología", progress: 90, icon: "🧪" },
+                    { name: "Literatura", description: "Literatura universal y análisis crítico", progress: 88, icon: "📔" },
+                    { name: "Inglés Avanzado", description: "Conversación fluida y escritura académica", progress: 86, icon: "🌐" },
+                    { name: "Historia Universal", description: "Civilizaciones, guerras mundiales y globalización", progress: 83, icon: "🌍" },
+                    { name: "Filosofía", description: "Pensamiento crítico, lógica y ética filosófica", progress: 79, icon: "🤔" },
+                    { name: "Informática", description: "Programación, bases de datos y desarrollo web", progress: 92, icon: "💻" }
+                ],
+                stats: {
+                    completed: "8/9",
+                    average: "8.9",
+                    certifications: "4"
+                }
+            },
+            superior: {
+                title: "📚 Materias - Educación Superior",
+                subjects: [
+                    { name: "Cálculo Avanzado", description: "Cálculo multivariable, series y ecuaciones diferenciales", progress: 85, icon: "∞" },
+                    { name: "Estadística", description: "Probabilidad, inferencia y análisis estadístico", progress: 91, icon: "📊" },
+                    { name: "Metodología de Investigación", description: "Diseño experimental y métodos científicos", progress: 88, icon: "🔍" },
+                    { name: "Ética Profesional", description: "Responsabilidad social y código deontológico", progress: 94, icon: "🤝" },
+                    { name: "Seminario de Tesis", description: "Desarrollo de proyecto de investigación final", progress: 77, icon: "📄" },
+                    { name: "Inglés Técnico", description: "Terminología especializada y comunicación académica", progress: 89, icon: "🎓" },
+                    { name: "Tecnologías Emergentes", description: "IA, blockchain, IoT y tendencias tecnológicas", progress: 93, icon: "🚀" },
+                    { name: "Emprendimiento", description: "Modelos de negocio e innovación empresarial", progress: 86, icon: "💡" }
+                ],
+                stats: {
+                    completed: "7/8",
+                    average: "9.2",
+                    certifications: "5"
+                }
+            }
+        };
+
+        let currentLevelData = 'primaria';
+        let progressChart = null;
+
+        // Initialize the application
+        function init() {
+            createParticles();
+            setupEventListeners();
+            loadLevel('primaria');
+            createProgressChart();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Level selection
+            document.querySelectorAll('.level').forEach(level => {
+                level.addEventListener('click', () => {
+                    const levelName = level.dataset.level;
+                    loadLevel(levelName);
+                });
+            });
+
+            // Action buttons
+            document.getElementById('studyBtn').addEventListener('click', () => {
+                showModal('📖 Estudiar', 'Accede a materiales de estudio interactivos, videos educativos y ejercicios prácticos para reforzar tu aprendizaje.');
+            });
+
+            document.getElementById('examBtn').addEventListener('click', () => {
+                showModal('📝 Exámenes', 'Realiza evaluaciones personalizadas, simulacros de examen y recibe retroalimentación instantánea sobre tu desempeño.');
+            });
+
+            document.getElementById('resourcesBtn').addEventListener('click', () => {
+                showModal('💡 Recursos', 'Explora nuestra biblioteca digital con libros, artículos, calculadoras educativas y herramientas de apoyo académico.');
+            });
+
+            document.getElementById('progressBtn').addEventListener('click', () => {
+                showModal('📊 Mi Progreso', 'Visualiza tu avance académico detallado, estadísticas de rendimiento y objetivos de aprendizaje cumplidos.');
+            });
+
+            // Modal close
+            document.querySelector('.close').addEventListener('click', () => {
+                document.getElementById('actionModal').style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                const modal = document.getElementById('actionModal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Load level data
+        function loadLevel(levelName) {
+            currentLevelData = levelName;
+            const data = educationalData[levelName];
+            
+            // Update current level display
+            document.getElementById('currentLevel').textContent = 
+                levelName.charAt(0).toUpperCase() + levelName.slice(1).replace('-', ' ');
+            
+            // Update active level
+            document.querySelectorAll('.level').forEach(level => {
+                level.classList.remove('active');
+                if (level.dataset.level === levelName) {
+                    level.classList.add('active');
+                }
+            });
+            
+            // Update subjects title
+            document.getElementById('subjectsTitle').textContent = data.title;
+            
+            // Update subjects list
+            const subjectsList = document.getElementById('subjectsList');
+            subjectsList.innerHTML = '';
+            
+            data.subjects.forEach(subject => {
+                const subjectDiv = document.createElement('div');
+                subjectDiv.className = 'subject-item';
+                
+                const progressClass = subject.progress >= 85 ? 'high' : 
+                                    subject.progress >= 70 ? 'medium' : 'low';
+                
+                subjectDiv.innerHTML = `
+                    <div class="subject-icon">${subject.icon}</div>
+                    <div class="subject-details">
+                        <div class="subject-name">${subject.name}</div>
+                        <div class="subject-description">${subject.description}</div>
+                    </div>
+                    <div class="subject-progress">
+                        <div class="progress-circle ${progressClass}" style="--progress: ${subject.progress * 3.6}deg;">
+                            ${subject.progress}%
+                        </div>
+                        <div class="progress-text">Progreso</div>
+                    </div>
+                `;
+                
+                subjectsList.appendChild(subjectDiv);
+            });
+            
+            // Update stats
+            document.getElementById('completedSubjects').textContent = data.stats.completed;
+            document.getElementById('averageGrade').textContent = data.stats.average;
+            document.getElementById('certifications').textContent = data.stats.certifications;
+            
+            // Update chart
+            updateProgressChart(data.subjects);
+        }
+
+        // Show modal
+        function showModal(title, content) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalContent').textContent = content;
+            document.getElementById('actionModal').style.display = 'block';
+        }
+
+        // Create and initialize progress chart
+        function createProgressChart() {
+            const canvas = document.getElementById('progressChartCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            progressChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Progreso (%)',
+                        data: [],
+                        backgroundColor: 'rgba(59,130,246,0.7)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update chart with subjects data
+        function updateProgressChart(subjects) {
+            if (!progressChart || !subjects) return;
+            const labels = subjects.map(s => s.name);
+            const data = subjects.map(s => s.progress);
+            progressChart.data.labels = labels;
+            progressChart.data.datasets[0].data = data;
+            progressChart.update();
+        }
+
+     
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Add smooth scrolling for better UX
+        document.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.bg-particles');
+            const speed = scrolled * 0.5;
+            if (parallax) parallax.style.transform = `translateY(${speed}px)`;
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('actionModal');
+                if (modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -22,11 +22,7 @@
             --star-bg: rgba(255, 255, 255, 0.3);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -36,29 +32,9 @@
             overflow-x: hidden;
         }
 
-        .bg-particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
-            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
-        }
+        .bg-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        .particle { position: absolute; width: 4px; height: 4px; background: rgba(255, 255, 255, 0.3); border-radius: 50%; animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; } 50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; } }
 
         header {
             background: var(--glass-bg);
@@ -73,219 +49,43 @@
             z-index: 100;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
+        header h1 { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1.8rem; color: white; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        nav { display: flex; gap: 30px; }
+        nav a { color: rgba(255, 255, 255, 0.9); text-decoration: none; font-weight: 500; padding: 8px 16px; border-radius: 20px; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        nav a::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.2); transition: left 0.3s ease; }
+        nav a:hover::before, nav a.active::before { left: 0; }
+        nav a:hover, nav a.active { color: white; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
 
-        header h1 {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            font-size: 1.8rem;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+        .search-section { max-width: 1200px; margin: 40px auto 20px; padding: 0 30px; }
+        .search-container { background: var(--glass-bg); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); padding: 32px; text-align: center; animation: cardFloat 6s ease-in-out infinite; }
+        .search-title { font-family: 'Poppins', sans-serif; font-size: 2rem; font-weight: 600; color: white; margin-bottom: 8px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .search-subtitle { color: rgba(255, 255, 255, 0.8); font-size: 1.1rem; margin-bottom: 24px; }
+        .search-input { width: 100%; max-width: 500px; padding: 16px 24px; font-size: 1rem; border: none; border-radius: 20px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: white; transition: all 0.3s ease; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); }
+        .search-input::placeholder { color: rgba(255, 255, 255, 0.7); }
+        .search-input:focus { outline: none; background: rgba(255, 255, 255, 0.3); transform: scale(1.02); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); }
 
-        nav {
-            display: flex;
-            gap: 30px;
-        }
+        .section { max-width: 1400px; margin: 20px auto 20px; padding: 0 30px; }
+        .section-title { color: white; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 1.4rem; margin: 10px 0 0; }
 
-        nav a {
-            color: rgba(255, 255, 255, 0.9);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 20px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+        main { max-width: 1400px; margin: 10px auto 60px; padding: 0 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
 
-        nav a::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: left 0.3s ease;
-        }
+        .course-card { background: var(--glass-bg); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); overflow: hidden; transition: all 0.3s ease; display: flex; flex-direction: column; position: relative; }
+        .course-card:hover { transform: translateY(-8px); box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2); }
+        .course-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--primary-gradient); transition: height 0.3s ease; }
+        .course-card:hover::before { height: 6px; }
 
-        nav a:hover::before,
-        nav a.active::before {
-            left: 0;
-        }
+        .course-image { width: 100%; height: 200px; object-fit: cover; transition: transform 0.3s ease; }
+        .course-card:hover .course-image { transform: scale(1.05); }
+        .course-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; }
+        .course-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+        .stars { display: flex; gap: 2px; }
+        .star { width: 18px; height: 18px; fill: var(--star-bg); transition: fill 0.3s ease; }
+        .star.filled { fill: var(--star-color); }
+        .rating-text { color: rgba(255, 255, 255, 0.8); font-size: 0.9rem; font-weight: 500; }
+        .course-title { font-family: 'Poppins', sans-serif; font-size: 1.3rem; font-weight: 600; color: white; margin-bottom: 12px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); line-height: 1.3; }
+        .course-description { color: rgba(255, 255, 255, 0.8); font-size: 0.95rem; line-height: 1.5; flex-grow: 1; margin-bottom: 20px; }
 
-        nav a:hover,
-        nav a.active {
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .search-section {
-            max-width: 1200px;
-            margin: 40px auto 20px;
-            padding: 0 30px;
-        }
-
-        .search-container {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            padding: 32px;
-            text-align: center;
-            animation: cardFloat 6s ease-in-out infinite;
-        }
-
-        .search-title {
-            font-family: 'Poppins', sans-serif;
-            font-size: 2rem;
-            font-weight: 600;
-            color: white;
-            margin-bottom: 8px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .search-subtitle {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1.1rem;
-            margin-bottom: 24px;
-        }
-
-        .search-input {
-            width: 100%;
-            max-width: 500px;
-            padding: 16px 24px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            color: white;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .search-input:focus {
-            outline: none;
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.02);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-        }
-
-        main {
-            max-width: 1400px;
-            margin: 20px auto 60px;
-            padding: 0 30px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-        }
-
-        .course-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        .course-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
-        }
-
-        .course-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--primary-gradient);
-            transition: height 0.3s ease;
-        }
-
-        .course-card:hover::before {
-            height: 6px;
-        }
-
-        .course-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .course-card:hover .course-image {
-            transform: scale(1.05);
-        }
-
-        .course-content {
-            padding: 24px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .course-rating {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .stars {
-            display: flex;
-            gap: 2px;
-        }
-
-        .star {
-            width: 18px;
-            height: 18px;
-            fill: var(--star-bg);
-            transition: fill 0.3s ease;
-        }
-
-        .star.filled {
-            fill: var(--star-color);
-        }
-
-        .rating-text {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .course-title {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: white;
-            margin-bottom: 12px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            line-height: 1.3;
-        }
-
-        .course-description {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.95rem;
-            line-height: 1.5;
-            flex-grow: 1;
-            margin-bottom: 20px;
-        }
-
-        .course-button {
+        .course-button, .course-link {
             background: var(--primary-gradient);
             border: none;
             border-radius: 16px;
@@ -300,144 +100,41 @@
             overflow: hidden;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            text-align: center;
+            display: inline-block;
         }
-
-        .course-button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
+        .course-link { text-decoration: none; }
+        .course-button:disabled { opacity: 0.6; cursor: not-allowed; }
         .course-button::before {
             content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: all 0.6s ease;
+            position: absolute; top: 50%; left: 50%; width: 0; height: 0; background: rgba(255, 255, 255, 0.2); border-radius: 50%; transform: translate(-50%, -50%); transition: all 0.6s ease;
         }
+        .course-button:hover:not(:disabled)::before { width: 300px; height: 300px; }
+        .course-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(102, 126, 234, 0.4); }
 
-        .course-button:hover:not(:disabled)::before {
-            width: 300px;
-            height: 300px;
-        }
+        .no-results { grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: var(--glass-bg); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); }
+        .no-results-icon { font-size: 4rem; margin-bottom: 16px; }
+        .no-results h3 { font-family: 'Poppins', sans-serif; font-size: 1.5rem; font-weight: 600; color: white; margin-bottom: 8px; }
+        .no-results p { color: rgba(255, 255, 255, 0.8); font-size: 1rem; }
 
-        .course-button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 28px rgba(102, 126, 234, 0.4);
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.1); border-radius: 20px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 20px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.5); }
 
-        .no-results {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 60px 20px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
+        @keyframes cardFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-8px); } }
+        .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .no-results-icon {
-            font-size: 4rem;
-            margin-bottom: 16px;
-        }
-
-        .no-results h3 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: white;
-            margin-bottom: 8px;
-        }
-
-        .no-results p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 1rem;
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-        @keyframes cardFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 1200px) {
-            main {
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 25px;
-            }
-        }
-
+        @media (max-width: 1200px) { main { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; } }
         @media (max-width: 768px) {
-            header {
-                padding: 15px 20px;
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            nav {
-                gap: 15px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            main {
-                padding: 0 20px;
-                margin: 20px auto 40px;
-                grid-template-columns: 1fr;
-            }
-
-            .search-section {
-                padding: 0 20px;
-                margin: 20px auto;
-            }
-
-            .search-container {
-                padding: 24px;
-            }
-
-            .search-title {
-                font-size: 1.6rem;
-            }
-
-            .course-content {
-                padding: 20px;
-            }
+            header { padding: 15px 20px; flex-direction: column; gap: 15px; }
+            nav { gap: 15px; flex-wrap: wrap; justify-content: center; }
+            main { padding: 0 20px; margin: 20px auto 40px; grid-template-columns: 1fr; }
+            .search-section { padding: 0 20px; margin: 20px auto; }
+            .search-container { padding: 24px; }
+            .search-title { font-size: 1.6rem; }
+            .course-content { padding: 20px; }
         }
     </style>
 </head>
@@ -448,7 +145,7 @@
     <header>
         <h1>Cursos</h1>
         <nav>
-            <a href="Inicio.html">🏠 Inicio</a>
+            <a href="Index.html">🏠 Inicio</a>
             <a href="cursos.html" class="active">📚 Cursos</a>
             <a href="niveles.html">🎯 Niveles</a>
             <a href="materias.html">📖 Materias</a>
@@ -463,86 +160,71 @@
             <input type="text" class="search-input" placeholder="Buscar por título, tecnología o tema..." id="search-input" />
         </div>
     </section>
+
+    <section class="section">
+        <h3 class="section-title">🎓 Tus cursos adquiridos</h3>
+        <div id="purchased-container" class="mt-3 grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;"></div>
+    </section>
     
     <main id="courses-container"></main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/11.2.2/stellar-sdk.min.js"></script>
     <script>
+        // ===== Datos base de cursos =====
         const courses = [
-            { 
-                id: 1, 
-                title: "Introducción a JavaScript", 
-                description: "Aprende los fundamentos de JavaScript desde cero, ideal para principiantes. Domina variables, funciones, eventos y manipulación del DOM.", 
-                image: "https://i.pinimg.com/736x/d0/32/34/d03234bfa8029236fbd88916fab35831.jpg", 
-                rating: 3.5,
-                category: "Programación",
-                price: 10
-            },
-            { 
-                id: 2, 
-                title: "Desarrollo Web con React", 
-                description: "Construye interfaces de usuario dinámicas con React y sus principales herramientas. Aprende hooks, contexto y manejo de estado.", 
-                image: "https://i.pinimg.com/736x/9b/4e/e0/9b4ee057076232fb57c48cf80947f8a7.jpg", 
-                rating: 5.0,
-                category: "Frontend",
-                price: 15
-            },
-            { 
-                id: 3, 
-                title: "Python para Ciencia de Datos", 
-                description: "Descubre cómo usar Python y librerías populares para análisis y visualización de datos. Pandas, NumPy, Matplotlib y más.", 
-                image: "https://i.pinimg.com/736x/2d/d8/03/2dd8031b5e88f0104d083e4ed6233bc0.jpg", 
-                rating: 4.2,
-                category: "Data Science",
-                price: 20
-            },
-            { 
-                id: 4, 
-                title: "Introducción a Machine Learning", 
-                description: "Conceptos básicos y técnicas fundamentales para iniciarse en Machine Learning. Algoritmos supervisados y no supervisados.", 
-                image: "https://i.pinimg.com/736x/5b/10/93/5b1093e848ffd5b7c018c57fe300da8d.jpg", 
-                rating: 2.8,
-                category: "IA & ML",
-                price: 25
-            },
-            { 
-                id: 5, 
-                title: "Diseño UX/UI Moderno", 
-                description: "Aprende los principios del diseño de experiencia e interfaces para productos digitales. Figma, prototipado y testing.", 
-                image: "https://images.unsplash.com/photo-1542831371-d531d36971e6?auto=format&fit=crop&w=600&q=80", 
-                rating: 4.6,
-                category: "Diseño",
-                price: 30
-            },
-            { 
-                id: 6, 
-                title: "Marketing Digital Estratégico", 
-                description: "Domina las técnicas más efectivas para promocionar productos y servicios en línea. SEO, SEM, redes sociales y analytics.", 
-                image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80", 
-                rating: 3.9,
-                category: "Marketing",
-                price: 35
-            },
-            { 
-                id: 7, 
-                title: "Programación en Java Avanzado", 
-                description: "Aprende conceptos avanzados de Java para desarrollar aplicaciones complejas. Spring Framework, microservicios y arquitectura.", 
-                image: "https://images.unsplash.com/photo-1517433456452-f9633a875f6f?auto=format&fit=crop&w=600&q=80", 
-                rating: 2.5,
-                category: "Backend",
-                price: 40
-            },
-            { 
-                id: 8, 
-                title: "Blockchain y Criptomonedas", 
-                description: "Entiende la tecnología blockchain y cómo funcionan las criptomonedas hoy en día. Smart contracts y DeFi.", 
-                image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80", 
-                rating: 4.9,
-                category: "Blockchain",
-                price: 50
-            }
+            { id: 1, title: "Introducción a JavaScript", description: "Aprende los fundamentos de JavaScript desde cero, ideal para principiantes. Domina variables, funciones, eventos y manipulación del DOM.", image: "https://i.pinimg.com/736x/d0/32/34/d03234bfa8029236fbd88916fab35831.jpg", rating: 3.5, category: "Programación", price: 10 },
+            { id: 2, title: "Desarrollo Web con React", description: "Construye interfaces de usuario dinámicas con React y sus principales herramientas. Aprende hooks, contexto y manejo de estado.", image: "https://i.pinimg.com/736x/9b/4e/e0/9b4ee057076232fb57c48cf80947f8a7.jpg", rating: 5.0, category: "Frontend", price: 15 },
+            { id: 3, title: "Python para Ciencia de Datos", description: "Descubre cómo usar Python y librerías populares para análisis y visualización de datos. Pandas, NumPy, Matplotlib y más.", image: "https://i.pinimg.com/736x/2d/d8/03/2dd8031b5e88f0104d083e4ed6233bc0.jpg", rating: 4.2, category: "Data Science", price: 20 },
+            { id: 4, title: "Introducción a Machine Learning", description: "Conceptos básicos y técnicas fundamentales para iniciarse en Machine Learning. Algoritmos supervisados y no supervisados.", image: "https://i.pinimg.com/736x/5b/10/93/5b1093e848ffd5b7c018c57fe300da8d.jpg", rating: 2.8, category: "IA & ML", price: 25 },
+            { id: 5, title: "Diseño UX/UI Moderno", description: "Aprende los principios del diseño de experiencia e interfaces para productos digitales. Figma, prototipado y testing.", image: "https://images.unsplash.com/photo-1542831371-d531d36971e6?auto=format&fit=crop&w=600&q=80", rating: 4.6, category: "Diseño", price: 30 },
+            { id: 6, title: "Marketing Digital Estratégico", description: "Domina las técnicas más efectivas para promocionar productos y servicios en línea. SEO, SEM, redes sociales y analytics.", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80", rating: 3.9, category: "Marketing", price: 35 },
+            { id: 7, title: "Programación en Java Avanzado", description: "Aprende conceptos avanzados de Java para desarrollar aplicaciones complejas. Spring Framework, microservicios y arquitectura.", image: "https://images.unsplash.com/photo-1517433456452-f9633a875f6f?auto=format&fit=crop&w=600&q=80", rating: 2.5, category: "Backend", price: 40 },
+            { id: 8, title: "Blockchain y Criptomonedas", description: "Entiende la tecnología blockchain y cómo funcionan las criptomonedas hoy en día. Smart contracts y DeFi.", image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80", rating: 4.9, category: "Blockchain", price: 50 }
         ];
 
+        // ===== Persistencia por usuario (MEJORADO) =====
+        function getIdentityKey() {
+            // Usar solo la clave pública de Stellar como identificador único
+            const pub = localStorage.getItem('stellarPublic');
+            if (pub) return 'purchases_' + pub;
+            return 'purchases_guest';
+        }
+
+        function addToPurchased(courseId) {
+            const key = getIdentityKey();
+            let purchased = [];
+            try {
+                const stored = localStorage.getItem(key);
+                purchased = stored ? JSON.parse(stored) : [];
+            } catch (e) {
+                purchased = [];
+            }
+            
+            // Si no está, agregarlo
+            if (!purchased.includes(courseId)) {
+                purchased.push(courseId);
+                localStorage.setItem(key, JSON.stringify(purchased));
+                return true;
+            }
+            return false;
+        }
+
+        function getPurchasedList() {
+            const key = getIdentityKey();
+            try {
+                const stored = localStorage.getItem(key);
+                return stored ? JSON.parse(stored) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function isCourseOwned(courseId) {
+            const list = getPurchasedList();
+            return list.includes(courseId);
+        }
+
+        // ===== UI dinámico =====
         function createParticles() {
             const container = document.querySelector('.bg-particles');
             for (let i = 0; i < 30; i++) {
@@ -552,327 +234,296 @@
                 p.style.left = (Math.random() * 100) + '%';
                 p.style.top = (Math.random() * 100) + '%';
                 const size = (2 + Math.random() * 6) + 'px';
-                p.style.width = size;
-                p.style.height = size;
-                p.style.background = 'rgba(255,255,255,0.15)';
-                p.style.borderRadius = '50%';
+                p.style.width = size; p.style.height = size; p.style.background = 'rgba(255,255,255,0.15)'; p.style.borderRadius = '50%';
                 container.appendChild(p);
             }
+        }
+
+        function courseCard(course, isPurchased=false) {
+            const card = document.createElement('div');
+            card.className = 'course-card';
+
+            const img = document.createElement('img');
+            img.src = course.image; 
+            img.className = 'course-image'; 
+            card.appendChild(img);
+
+            const content = document.createElement('div');
+            content.className = 'course-content';
+
+            const title = document.createElement('div');
+            title.className = 'course-title'; 
+            title.textContent = course.title; 
+            content.appendChild(title);
+
+            const desc = document.createElement('div');
+            desc.className = 'course-description'; 
+            desc.textContent = course.description; 
+            content.appendChild(desc);
+
+            const rating = document.createElement('div');
+            rating.className = 'course-rating';
+            rating.innerHTML = `<div class="stars">${'<svg class="star" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.788 1.402 8.168L12 18.896 4.664 23.166l1.402-8.168L0.132 9.21l8.2-1.192z"/></svg>'.repeat(Math.round(course.rating))}</div><div class="rating-text">${course.rating}</div>`;
+            content.appendChild(rating);
+
+            if (isPurchased) {
+                const link = document.createElement('a');
+                link.href = `materia.html?id=${course.id}`;
+                link.className = 'course-link';
+                link.textContent = 'Acceder al curso';
+                content.appendChild(link);
+            } else {
+                const btn = document.createElement('button');
+                btn.className = 'course-button';
+                btn.textContent = `Comprar - ${course.price} XLM`;
+                btn.addEventListener('click', () => handlePurchase(btn, course));
+                content.appendChild(btn);
+            }
+
+            card.appendChild(content);
+            return card;
+        }
+
+        function renderPurchased() {
+            const cont = document.getElementById('purchased-container');
+            const purchasedIds = getPurchasedList();
+            
+            cont.innerHTML = '';
+            
+            if (purchasedIds.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'no-results';
+                empty.innerHTML = '<div class="no-results-icon">😕</div><h3>Aún no has comprado cursos</h3><p>Cuando compres uno, aparecerá aquí.</p>';
+                cont.appendChild(empty);
+                return;
+            }
+            
+            // Mostrar solo los cursos comprados
+            purchasedIds.forEach(courseId => {
+                const course = courses.find(c => c.id === courseId);
+                if (course) {
+                    cont.appendChild(courseCard(course, true));
+                }
+            });
         }
 
         function renderCourses(coursesList) {
             const container = document.getElementById('courses-container');
             container.innerHTML = '';
-
+            
             coursesList.forEach(course => {
-                const card = document.createElement('div');
-                card.className = 'course-card';
-
-                const img = document.createElement('img');
-                img.src = course.image;
-                img.className = 'course-image';
-                card.appendChild(img);
-
-                const content = document.createElement('div');
-                content.className = 'course-content';
-
-                const title = document.createElement('div');
-                title.className = 'course-title';
-                title.textContent = course.title;
-                content.appendChild(title);
-
-                const desc = document.createElement('div');
-                desc.className = 'course-description';
-                desc.textContent = course.description;
-                content.appendChild(desc);
-
-                const rating = document.createElement('div');
-                rating.className = 'course-rating';
-                rating.innerHTML = `<div class="stars">${'<svg class="star" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.788 1.402 8.168L12 18.896 4.664 23.166l1.402-8.168L0.132 9.21l8.2-1.192z"/></svg>'.repeat(Math.round(course.rating))}</div><div class="rating-text">${course.rating}</div>`;
-                content.appendChild(rating);
-
-                const btn = document.createElement('button');
-                btn.className = 'course-button';
-                btn.textContent = `Comprar - ${course.price} XLM`;
-
-                btn.addEventListener('click', async () => {
-                    const originalHTML = btn.innerHTML;
-                    btn.disabled = true;
-                    const priceAmount = parseFloat(course.price);
-
-                    const destino = "GB3S2S4FGCTDTVGQ4UEB4SVVILOVATVEUIQ3WDLL224SUCFOWTBPYCQF";
-
-                    try {
-                        console.log('=== INICIANDO PAGO ===');
-                        console.log('Curso:', course.title);
-                        console.log('Precio:', course.price, 'XLM');
-                        console.log('Cuenta destino:', destino);
-
-                        const StellarSdk = window.StellarSdk;
-
-                        // Intentar detectar la red desde Freighter y elegir el endpoint Horizon apropiado.
-                        let horizonURL = "https://horizon-testnet.stellar.org";
-                        let networkPassphrase = StellarSdk.Networks.TESTNET;
-                        if (window.freighterApi) {
-                            try {
-                                if (typeof window.freighterApi.getNetwork === 'function') {
-                                    const net = await window.freighterApi.getNetwork();
-                                    console.log('Freighter network:', net);
-                                    if (typeof net === 'string' && /test/i.test(net)) {
-                                        horizonURL = "https://horizon-testnet.stellar.org";
-                                        networkPassphrase = StellarSdk.Networks.TESTNET;
-                                    } else {
-                                        horizonURL = "https://horizon.stellar.org";
-                                        networkPassphrase = StellarSdk.Networks.PUBLIC;
-                                    }
-                                } else {
-                                    console.warn('Freighter no proporciona getNetwork(), se usará Testnet por defecto (sin friendbot).');
-                                }
-                            } catch (e) {
-                                console.warn('No se pudo detectar la red desde Freighter, usando Testnet por defecto:', e);
-                            }
-                        }
-
-                        const server = new StellarSdk.Horizon.Server(horizonURL);
-
-                        // Preferir Freighter para firmar transacciones (no exponer la clave secreta)
-                        if (window.freighterApi) {
-                            console.log('✓ Freighter detectado — verificando permisos y conexión (isAllowed/setAllowed)');
-                            try {
-                                const isAllowed = await window.freighterApi.isAllowed();
-                                if (!isAllowed) {
-                                    await window.freighterApi.setAllowed();
-                                }
-                            } catch (permErr) {
-                                console.warn('Error verificando permisos con Freighter:', permErr);
-                                try {
-                                    if (typeof window.freighterApi.connect === 'function') {
-                                        await window.freighterApi.connect();
-                                    }
-                                } catch (cErr) {
-                                    console.error('No se pudo conectar con Freighter:', cErr);
-                                    alert('No se pudo conectar con Freighter. Revisa la extensión y sus permisos.');
-                                    btn.innerHTML = originalHTML;
-                                    btn.disabled = false;
-                                    return;
-                                }
-                            }
-
-                            const publicKey = await window.freighterApi.getPublicKey();
-                            console.log('Cuenta origen (Freighter):', publicKey);
-
-                            // Intentamos cargar la cuenta. Si no existe, NO llamamos a friendbot: solo informamos al usuario.
-                            let sourceAccount;
-                            try {
-                                console.log('Cargando cuenta desde Horizon:', horizonURL);
-                                sourceAccount = await server.loadAccount(publicKey);
-                                console.log('✓ Cuenta cargada');
-                            } catch (err) {
-                                console.warn('No se pudo cargar la cuenta (puede no existir o no tener fondos):', err);
-                                alert('La cuenta conectada no existe o no tiene fondos en la red seleccionada. No se intentará crear/fondar automáticamente. Por favor, cambia la red de tu wallet o usa friendbot manualmente si estás en Testnet.');
-                                btn.innerHTML = originalHTML;
-                                btn.disabled = false;
-                                return;
-                            }
-
-                            console.log('Obteniendo fee...');
-                            const baseFee = await server.fetchBaseFee();
-                            console.log('✓ Fee base:', baseFee, 'stroops');
-
-                            console.log('Construyendo transacción...');
-
-                            // Verificar si la cuenta destino existe; si no, usaremos createAccount
-                            let destinoExiste = true;
-                            try {
-                                await server.loadAccount(destino);
-                                console.log('La cuenta destino existe en la red.');
-                            } catch (eDest) {
-                                console.warn('La cuenta destino no existe o no está activa:', eDest);
-                                destinoExiste = false;
-                            }
-
-                            // Verificar balance del origen (native XLM)
-                            const balances = sourceAccount.balances;
-                            const xlmBalObj = balances.find(b => b.asset_type === 'native');
-                            const xlmBalance = xlmBalObj ? parseFloat(xlmBalObj.balance) : 0;
-                            const priceAmount = parseFloat(course.price);
-                            const minReserve = 1.0;
-                            const needed = priceAmount + minReserve + 0.0001;
-                            if (xlmBalance < needed) {
-                                alert(`Saldo insuficiente. Tu balance: ${xlmBalance} XLM. Necesitas al menos ${needed.toFixed(7)} XLM (precio + reserva + fees aproximados).`);
-                                btn.innerHTML = originalHTML;
-                                btn.disabled = false;
-                                return;
-                            }
-
-                            // Construir la operación adecuada
-                            let op;
-                            if (!destinoExiste) {
-                                const startBal = priceAmount >= 1 ? priceAmount.toString() : '1';
-                                op = StellarSdk.Operation.createAccount({ destination: destino, startingBalance: startBal });
-                                console.log('Usando createAccount como operación porque la cuenta destino no existe. startingBalance=', startBal);
-                            } else {
-                                op = StellarSdk.Operation.payment({ destination: destino, asset: StellarSdk.Asset.native(), amount: course.price.toString() });
-                                console.log('Usando payment como operación hacia cuenta existente.');
-                            }
-
-                            const transaction = new StellarSdk.TransactionBuilder(sourceAccount, {
-                                fee: baseFee.toString(),
-                                networkPassphrase: networkPassphrase
-                            })
-                            .addOperation(op)
-                            .setTimeout(180)
-                            .build();
-                            console.log('✓ Transacción construida (lista para firmar con Freighter)');
-
-                            // Firmar con Freighter (se pasa la passphrase detectada si Freighter la requiere)
-                            const txXdr = transaction.toXDR();
-                            const signedXdr = await window.freighterApi.signTransaction(txXdr, { network: networkPassphrase, accountToSign: publicKey });
-                            const signedTx = StellarSdk.TransactionBuilder.fromXDR(signedXdr, networkPassphrase);
-
-                            console.log('Enviando transacción firmada a la red...');
-                            const result = await server.submitTransaction(signedTx);
-                            console.log('✅ TRANSACCIÓN EXITOSA');
-                            console.log('Hash:', result.hash);
-                            console.log('Ledger:', result.ledger);
-
-                            alert(`✅ ¡Felicidades! Has adquirido: ${course.title}\n\n💰 Se descontaron ${course.price} XLM de tu cuenta.\n\n🔗 Hash: ${result.hash.substring(0, 20)}...`);
-                            btn.innerHTML = `✅ Curso Adquirido`;
-                            btn.style.background = 'var(--soft-gradient)';
-                            btn.style.color = 'var(--text-primary)';
-                        } else {
-                            // No Freighter: si no existe clave en localStorage, cancelar sin pedir credenciales
-                            const storedSecret = localStorage.getItem('stellarSecret');
-                            if (storedSecret) {
-                                // si existe, intentar usarla: construir keypair y firmar localmente
-                                try {
-                                    const keypair = StellarSdk.Keypair.fromSecret(storedSecret);
-                                    const publicKey = keypair.publicKey();
-                                    const sourceAccount = await server.loadAccount(publicKey);
-                                    const baseFee = await server.fetchBaseFee();
-
-                                    let destinoExiste = true;
-                                    try { await server.loadAccount(destino); } catch (e) { destinoExiste = false; }
-
-                                    let op;
-                                    if (!destinoExiste) {
-                                        const startBal = priceAmount >= 1 ? priceAmount.toString() : '1';
-                                        op = StellarSdk.Operation.createAccount({ destination: destino, startingBalance: startBal });
-                                    } else {
-                                        op = StellarSdk.Operation.payment({ destination: destino, asset: StellarSdk.Asset.native(), amount: course.price.toString() });
-                                    }
-
-                                    const tx = new StellarSdk.TransactionBuilder(sourceAccount, { fee: baseFee.toString(), networkPassphrase: StellarSdk.Networks.TESTNET })
-                                        .addOperation(op)
-                                        .setTimeout(180)
-                                        .build();
-
-                                    tx.sign(keypair);
-                                    const result = await server.submitTransaction(tx);
-                                    alert(`✅ ¡Felicidades! Has adquirido: ${course.title}\n\n💰 Se descontaron ${course.price} XLM de tu cuenta.\n\n🔗 Hash: ${result.hash.substring(0, 20)}...`);
-                                    btn.innerHTML = `✅ Curso Adquirido`;
-                                    btn.style.background = 'var(--soft-gradient)';
-                                    btn.style.color = 'var(--text-primary)';
-                                    return;
-                                } catch (localErr) {
-                                    console.error('Error usando clave local:', localErr);
-                                    alert('Se detectó una clave local pero ocurrió un error al usarla. Revisa la consola (F12).');
-                                    btn.innerHTML = originalHTML;
-                                    btn.disabled = false;
-                                    return;
-                                }
-                            }
-                            alert('No se detectó Freighter y no se encontró una clave local disponible. Conecta Freighter o inicia sesión/crea una cuenta en la app para procesar pagos.');
-                            btn.innerHTML = originalHTML;
-                            btn.disabled = false;
-                            return;
-                        }
-                    } catch (error) {
-                        console.error('❌ ERROR EN LA TRANSACCIÓN');
-                        console.error('Error completo:', error);
-
-                        let errorMessage = "Error desconocido al procesar el pago";
-
-                        if (error.message && !error.response) {
-                            errorMessage = error.message;
-                        } else if (error.response && error.response.data) {
-                            const errorData = error.response.data;
-                            console.error('Datos del error:', errorData);
-
-                            if (errorData.extras && errorData.extras.result_codes) {
-                                const codes = errorData.extras.result_codes;
-                                console.error('Códigos de error:', codes);
-
-                                if (codes.transaction === 'tx_failed') {
-                                    if (codes.operations && codes.operations[0] === 'op_underfunded') {
-                                        errorMessage = `❌ No tienes suficientes fondos.\n\nNecesitas: ${course.price} XLM + fees (~0.00001 XLM)\n\n💡 Obtén fondos de testnet en:\nhttps://laboratory.stellar.org/#account-creator`;
-                                    } else if (codes.operations && codes.operations[0] === 'op_no_destination') {
-                                        errorMessage = "❌ La cuenta de destino no existe o no está activa en testnet";
-                                    } else if (codes.operations && codes.operations[0] === 'op_line_full') {
-                                        errorMessage = "❌ La cuenta de destino ha alcanzado su límite";
-                                    } else {
-                                        errorMessage = `❌ Error en la operación: ${codes.operations ? codes.operations[0] : 'desconocido'}`;
-                                    }
-                                } else if (codes.transaction === 'tx_bad_seq') {
-                                    errorMessage = "❌ Error de secuencia. Por favor, intenta nuevamente.";
-                                } else if (codes.transaction === 'tx_insufficient_fee') {
-                                    errorMessage = "❌ Fee insuficiente. Por favor, intenta nuevamente.";
-                                } else {
-                                    errorMessage = `❌ Error de transacción: ${codes.transaction}`;
-                                }
-                            } else if (errorData.title) {
-                                errorMessage = `❌ ${errorData.title}`;
-                            }
-                        }
-
-                        alert(errorMessage + "\n\n🔍 Revisa la consola del navegador (F12) para más detalles.");
-                        btn.innerHTML = originalHTML;
-                        btn.disabled = false;
-                    }
-                });
-
-                content.appendChild(btn);
-
-                card.appendChild(content);
-                container.appendChild(card);
+                // Mostrar todos los cursos (independientemente de si están comprados)
+                container.appendChild(courseCard(course, false));
             });
         }
 
         function filterCourses() {
-            const searchInput = document.getElementById("search-input");
-            const searchTerm = searchInput.value.toLowerCase();
-            const filteredCourses = courses.filter(course =>
+            const searchInput = document.getElementById('search-input');
+            const searchTerm = (searchInput.value || '').toLowerCase();
+            const filtered = courses.filter(course =>
                 course.title.toLowerCase().includes(searchTerm) ||
                 course.description.toLowerCase().includes(searchTerm) ||
                 course.category.toLowerCase().includes(searchTerm)
             );
-            renderCourses(filteredCourses);
+            renderCourses(filtered);
+        }
+
+        async function ensurePublicKeyFromFreighter() {
+            if (!window.freighterApi) return null;
+            try {
+                const isAllowed = await window.freighterApi.isAllowed();
+                if (!isAllowed) await window.freighterApi.setAllowed();
+            } catch(e) {}
+            try {
+                const pk = await window.freighterApi.getPublicKey();
+                if (pk && !localStorage.getItem('stellarPublic')) {
+                    localStorage.setItem('stellarPublic', pk);
+                }
+                return pk;
+            } catch(e) { return null; }
+        }
+
+        async function handlePurchase(btn, course) {
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            const priceAmount = parseFloat(course.price);
+            const destino = "GB3S2S4FGCTDTVGQ4UEB4SVVILOVATVEUIQ3WDLL224SUCFOWTBPYCQF";
+
+            try {
+                const StellarSdk = window.StellarSdk;
+                let horizonURL = "https://horizon-testnet.stellar.org";
+                let networkPassphrase = StellarSdk.Networks.TESTNET;
+
+                if (window.freighterApi) {
+                    try { 
+                        const net = await window.freighterApi.getNetwork(); 
+                        if (typeof net === 'string' && !/test/i.test(net)) { 
+                            horizonURL = 'https://horizon.stellar.org'; 
+                            networkPassphrase = StellarSdk.Networks.PUBLIC; 
+                        } 
+                    } catch(e) {}
+                }
+
+                const server = new StellarSdk.Horizon.Server(horizonURL);
+
+                if (window.freighterApi) {
+                    try { 
+                        const isAllowed = await window.freighterApi.isAllowed(); 
+                        if (!isAllowed) await window.freighterApi.setAllowed(); 
+                    } catch(e) {}
+                    
+                    const publicKey = await window.freighterApi.getPublicKey();
+
+                    let sourceAccount;
+                    try { 
+                        sourceAccount = await server.loadAccount(publicKey); 
+                    } catch(err) {
+                        alert('La cuenta conectada no existe o no tiene fondos en la red seleccionada.');
+                        btn.innerHTML = originalHTML; 
+                        btn.disabled = false; 
+                        return;
+                    }
+
+                    const baseFee = await server.fetchBaseFee();
+
+                    let destinoExiste = true; 
+                    try { 
+                        await server.loadAccount(destino); 
+                    } catch (e) { 
+                        destinoExiste = false; 
+                    }
+
+                    const xlmBalObj = sourceAccount.balances.find(b => b.asset_type === 'native');
+                    const xlmBalance = xlmBalObj ? parseFloat(xlmBalObj.balance) : 0;
+                    const minReserve = 1.0; 
+                    const needed = priceAmount + minReserve + 0.0001;
+                    
+                    if (xlmBalance < needed) {
+                        alert(`Saldo insuficiente. Tu balance: ${xlmBalance} XLM. Necesitas al menos ${needed.toFixed(7)} XLM.`);
+                        btn.innerHTML = originalHTML; 
+                        btn.disabled = false; 
+                        return;
+                    }
+
+                    const op = destinoExiste
+                        ? StellarSdk.Operation.payment({ destination: destino, asset: StellarSdk.Asset.native(), amount: course.price.toString() })
+                        : StellarSdk.Operation.createAccount({ destination: destino, startingBalance: priceAmount >= 1 ? priceAmount.toString() : '1' });
+
+                    const transaction = new StellarSdk.TransactionBuilder(sourceAccount, { fee: baseFee.toString(), networkPassphrase })
+                        .addOperation(op)
+                        .setTimeout(180)
+                        .build();
+
+                    const signedXdr = await window.freighterApi.signTransaction(transaction.toXDR(), { network: networkPassphrase, accountToSign: publicKey });
+                    const signedTx = StellarSdk.TransactionBuilder.fromXDR(signedXdr, networkPassphrase);
+                    const result = await server.submitTransaction(signedTx);
+
+                    alert(`✅ ¡Felicidades! Has adquirido: ${course.title}\n\n💰 Se descontaron ${course.price} XLM de tu cuenta.\n\n🔗 Hash: ${result.hash.substring(0, 20)}...`);
+
+                    // Guardar compra en localStorage
+                    addToPurchased(course.id);
+                    
+                    // Actualizar solo la sección de cursos adquiridos
+                    renderPurchased();
+                    
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                    return;
+                }
+
+                const storedSecret = localStorage.getItem('stellarSecret');
+                if (storedSecret) {
+                    const keypair = StellarSdk.Keypair.fromSecret(storedSecret);
+                    const publicKey = keypair.publicKey();
+
+                    const sourceAccount = await server.loadAccount(publicKey);
+                    const baseFee = await server.fetchBaseFee();
+                    
+                    let destinoExiste = true; 
+                    try { 
+                        await server.loadAccount(destino); 
+                    } catch (e) { 
+                        destinoExiste = false; 
+                    }
+
+                    const op = destinoExiste
+                        ? StellarSdk.Operation.payment({ destination: destino, asset: StellarSdk.Asset.native(), amount: course.price.toString() })
+                        : StellarSdk.Operation.createAccount({ destination: destino, startingBalance: priceAmount >= 1 ? priceAmount.toString() : '1' });
+
+                    const tx = new StellarSdk.TransactionBuilder(sourceAccount, { fee: baseFee.toString(), networkPassphrase: StellarSdk.Networks.TESTNET })
+                        .addOperation(op)
+                        .setTimeout(180)
+                        .build();
+
+                    tx.sign(keypair);
+                    const result = await server.submitTransaction(tx);
+
+                    alert(`✅ ¡Felicidades! Has adquirido: ${course.title}\n\n💰 Se descontaron ${course.price} XLM de tu cuenta.\n\n🔗 Hash: ${result.hash.substring(0, 20)}...`);
+
+                    addToPurchased(course.id);
+                    renderPurchased();
+                    
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                    return;
+                }
+
+                alert('No hay Freighter ni clave local disponible para firmar la transacción. Conecta tu wallet o inicia sesión/crea cuenta.');
+                btn.innerHTML = originalHTML; 
+                btn.disabled = false; 
+                return;
+                
+            } catch (error) {
+                console.error('❌ ERROR EN LA TRANSACCIÓN', error);
+                let errorMessage = 'Error desconocido al procesar el pago';
+                if (error && error.response && error.response.data) {
+                    const errorData = error.response.data;
+                    if (errorData.extras && errorData.extras.result_codes) {
+                        const codes = errorData.extras.result_codes;
+                        if (codes.transaction === 'tx_failed') {
+                            if (codes.operations && codes.operations[0] === 'op_underfunded') {
+                                errorMessage = `❌ No tienes suficientes fondos. Necesitas: ${course.price} XLM + fees.`;
+                            } else if (codes.operations && codes.operations[0] === 'op_no_destination') {
+                                errorMessage = '❌ La cuenta destino no existe o no está activa';
+                            } else {
+                                errorMessage = `❌ Error en la operación: ${codes.operations ? codes.operations[0] : 'desconocido'}`;
+                            }
+                        } else {
+                            errorMessage = `❌ Error de transacción: ${codes.transaction}`;
+                        }
+                    } else if (errorData.title) {
+                        errorMessage = `❌ ${errorData.title}`;
+                    }
+                } else if (error && error.message) {
+                    errorMessage = error.message;
+                }
+                alert(errorMessage + "\n\n🔍 Revisa la consola del navegador (F12) para más detalles.");
+                btn.innerHTML = originalHTML; 
+                btn.disabled = false;
+            }
         }
 
         function init() {
             createParticles();
-            renderCourses(courses);
+            ensurePublicKeyFromFreighter().finally(() => {
+                renderPurchased();
+                renderCourses(courses);
+            });
             
-            document.getElementById("search-input").addEventListener("input", filterCourses);
+            document.getElementById('search-input').addEventListener('input', filterCourses);
             
             document.addEventListener('scroll', () => {
                 const scrolled = window.pageYOffset;
                 const parallax = document.querySelector('.bg-particles');
-                const speed = scrolled * 0.3;
+                const speed = scrolled * 0.3; 
                 parallax.style.transform = `translateY(${speed}px)`;
             });
 
-            // Verificar si hay una wallet disponible o una cuenta pública guardada
             const hasFreighter = !!window.freighterApi;
             const hasPublic = !!localStorage.getItem('stellarPublic');
-            if (hasFreighter) {
-                console.log('✓ Freighter detectado en el navegador');
-            } else if (hasPublic) {
-                console.log('✓ Cuenta pública encontrada:', localStorage.getItem('stellarPublic'));
-            } else {
-                console.warn('⚠️ No se encontró Freighter ni cuenta pública en localStorage');
-                console.log('💡 Conecta Freighter o inicia sesión en la app para poder procesar pagos');
-            }
+            if (hasFreighter) { console.log('✓ Freighter detectado'); }
+            else if (hasPublic) { console.log('✓ Cuenta pública encontrada'); }
+            else { console.warn('⚠️ No se encontró Freighter ni cuenta pública'); }
         }
 
         document.addEventListener('DOMContentLoaded', init);

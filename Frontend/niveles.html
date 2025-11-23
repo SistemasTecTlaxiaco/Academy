@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <title>Niveles Educativos</title>
+    <style>
+        /* Estilos personalizados aquí */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #2d3748;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* Main Container */
+        main {
+            max-width: 1400px;
+            margin: 20px auto 60px;
+            padding: 0 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .level-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .level-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .level-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .level-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .level-button {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 16px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .level-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Niveles</h1>
+        <nav>
+            <a href="Inicio.html">🏠 Inicio</a>
+            <a href="cursos.html" class="active">📚 Cursos</a>
+            <a href="niveles.html">🎯 Niveles</a>
+            <a href="materias.html">📖 Materias</a>
+            <a href="cetificado.html">🏆 Certificados</a>
+        </nav>
+    </header>
+
+    <main id="levels-container">
+        <div class="level-card">
+            <h2 class="level-title">Primaria</h2>
+            <p class="level-description">Fundamentos básicos de educación para niños.</p>
+            <button class="level-button">Ver Cursos</button>
+        </div>
+
+        <div class="level-card">
+            <h2 class="level-title">Secundaria</h2>
+            <p class="level-description">Educación intermedia con materias diversificadas.</p>
+            <button class="level-button">Ver Cursos</button>
+        </div>
+
+        <div class="level-card">
+            <h2 class="level-title">Nivel Medio Superior</h2>
+            <p class="level-description">Preparación para la educación superior o técnica.</p>
+            <button class="level-button">Ver Cursos</button>
+        </div>
+
+        <div class="level-card">
+            <h2 class="level-title">Nivel Superior</h2>
+            <p class="level-description">Educación universitaria y profesional.</p>
+            <button class="level-button">Ver Cursos</button>
+        </div>
+    </main>
+</body>
+
+</html>
