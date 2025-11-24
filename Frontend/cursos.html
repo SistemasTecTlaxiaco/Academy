@@ -182,46 +182,46 @@
             { id: 8, title: "Blockchain y Criptomonedas", description: "Entiende la tecnología blockchain y cómo funcionan las criptomonedas hoy en día. Smart contracts y DeFi.", image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80", rating: 4.9, category: "Blockchain", price: 50 }
         ];
 
-        // ===== Persistencia por usuario =====
-        function getIdentityKeySync() {
-            // 1) Sesión por usuario (establecida desde Index.html si está disponible)
-            try {
-                const s = JSON.parse(localStorage.getItem('session') || 'null');
-                if (s && s.email) return 'user:' + s.email;
-            } catch(e) {}
-            // 2) Clave pública persistida
+        // ===== Persistencia por usuario (MEJORADO) =====
+        function getIdentityKey() {
+            // Usar solo la clave pública de Stellar como identificador único
             const pub = localStorage.getItem('stellarPublic');
-            if (pub) return 'pub:' + pub;
-            return null;
+            if (pub) return 'purchases_' + pub;
+            return 'purchases_guest';
         }
-        function getPurchases() {
-            const key = getIdentityKeySync();
-            if (!key) return [];
-            try { return JSON.parse(localStorage.getItem('purchases:' + key) || '[]'); } catch (e) { return []; }
-        }
-        function savePurchases(arr) {
-            const key = getIdentityKeySync();
-            if (!key) return;
-            localStorage.setItem('purchases:' + key, JSON.stringify(arr));
-        }
-        function isPurchased(courseId) {
-            const p = getPurchases();
-            return p.includes(courseId);
-        }
-        function recordPurchase(courseId, overridePubKey) {
-            // Si viene una pubKey explícita (ej. Freighter durante la compra), usaremos esa identidad
-            if (overridePubKey) {
-                const key = 'pub:' + overridePubKey;
-                const raw = localStorage.getItem('purchases:' + key);
-                let list = [];
-                try { list = raw ? JSON.parse(raw) : []; } catch(e) {}
-                if (!list.includes(courseId)) list.push(courseId);
-                localStorage.setItem('purchases:' + key, JSON.stringify(list));
-            } else {
-                const list = getPurchases();
-                if (!list.includes(courseId)) list.push(courseId);
-                savePurchases(list);
+
+        function addToPurchased(courseId) {
+            const key = getIdentityKey();
+            let purchased = [];
+            try {
+                const stored = localStorage.getItem(key);
+                purchased = stored ? JSON.parse(stored) : [];
+            } catch (e) {
+                purchased = [];
             }
+            
+            // Si no está, agregarlo
+            if (!purchased.includes(courseId)) {
+                purchased.push(courseId);
+                localStorage.setItem(key, JSON.stringify(purchased));
+                return true;
+            }
+            return false;
+        }
+
+        function getPurchasedList() {
+            const key = getIdentityKey();
+            try {
+                const stored = localStorage.getItem(key);
+                return stored ? JSON.parse(stored) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function isCourseOwned(courseId) {
+            const list = getPurchasedList();
+            return list.includes(courseId);
         }
 
         // ===== UI dinámico =====
@@ -239,28 +239,34 @@
             }
         }
 
-        function courseCard(course, purchased=false) {
+        function courseCard(course, isPurchased=false) {
             const card = document.createElement('div');
             card.className = 'course-card';
 
             const img = document.createElement('img');
-            img.src = course.image; img.className = 'course-image'; card.appendChild(img);
+            img.src = course.image; 
+            img.className = 'course-image'; 
+            card.appendChild(img);
 
             const content = document.createElement('div');
             content.className = 'course-content';
 
             const title = document.createElement('div');
-            title.className = 'course-title'; title.textContent = course.title; content.appendChild(title);
+            title.className = 'course-title'; 
+            title.textContent = course.title; 
+            content.appendChild(title);
 
             const desc = document.createElement('div');
-            desc.className = 'course-description'; desc.textContent = course.description; content.appendChild(desc);
+            desc.className = 'course-description'; 
+            desc.textContent = course.description; 
+            content.appendChild(desc);
 
             const rating = document.createElement('div');
             rating.className = 'course-rating';
             rating.innerHTML = `<div class="stars">${'<svg class="star" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.788 1.402 8.168L12 18.896 4.664 23.166l1.402-8.168L0.132 9.21l8.2-1.192z"/></svg>'.repeat(Math.round(course.rating))}</div><div class="rating-text">${course.rating}</div>`;
             content.appendChild(rating);
 
-            if (purchased) {
+            if (isPurchased) {
                 const link = document.createElement('a');
                 link.href = `materia.html?id=${course.id}`;
                 link.className = 'course-link';
@@ -280,25 +286,34 @@
 
         function renderPurchased() {
             const cont = document.getElementById('purchased-container');
-            const my = getPurchases();
+            const purchasedIds = getPurchasedList();
+            
             cont.innerHTML = '';
-            if (!my || my.length === 0) {
+            
+            if (purchasedIds.length === 0) {
                 const empty = document.createElement('div');
                 empty.className = 'no-results';
                 empty.innerHTML = '<div class="no-results-icon">😕</div><h3>Aún no has comprado cursos</h3><p>Cuando compres uno, aparecerá aquí.</p>';
                 cont.appendChild(empty);
                 return;
             }
-            const items = courses.filter(c => my.includes(c.id));
-            items.forEach(course => cont.appendChild(courseCard(course, true)));
+            
+            // Mostrar solo los cursos comprados
+            purchasedIds.forEach(courseId => {
+                const course = courses.find(c => c.id === courseId);
+                if (course) {
+                    cont.appendChild(courseCard(course, true));
+                }
+            });
         }
 
         function renderCourses(coursesList) {
             const container = document.getElementById('courses-container');
             container.innerHTML = '';
+            
             coursesList.forEach(course => {
-                const purchased = isPurchased(course.id);
-                container.appendChild(courseCard(course, purchased));
+                // Mostrar todos los cursos (independientemente de si están comprados)
+                container.appendChild(courseCard(course, false));
             });
         }
 
@@ -332,41 +347,62 @@
             const originalHTML = btn.innerHTML;
             btn.disabled = true;
             const priceAmount = parseFloat(course.price);
-            const destino = "GB3S2S4FGCTDTVGQ4UEB4SVVILOVATVEUIQ3WDLL224SUCFOWTBPYCQF"; // cuenta receptora
+            const destino = "GB3S2S4FGCTDTVGQ4UEB4SVVILOVATVEUIQ3WDLL224SUCFOWTBPYCQF";
 
             try {
                 const StellarSdk = window.StellarSdk;
                 let horizonURL = "https://horizon-testnet.stellar.org";
                 let networkPassphrase = StellarSdk.Networks.TESTNET;
-                let purchaseIdentity = null; // se llena con la pubKey utilizada
 
                 if (window.freighterApi) {
-                    try { const net = await window.freighterApi.getNetwork(); if (typeof net === 'string' && !/test/i.test(net)) { horizonURL = 'https://horizon.stellar.org'; networkPassphrase = StellarSdk.Networks.PUBLIC; } } catch(e) {}
+                    try { 
+                        const net = await window.freighterApi.getNetwork(); 
+                        if (typeof net === 'string' && !/test/i.test(net)) { 
+                            horizonURL = 'https://horizon.stellar.org'; 
+                            networkPassphrase = StellarSdk.Networks.PUBLIC; 
+                        } 
+                    } catch(e) {}
                 }
 
                 const server = new StellarSdk.Horizon.Server(horizonURL);
 
                 if (window.freighterApi) {
-                    try { const isAllowed = await window.freighterApi.isAllowed(); if (!isAllowed) await window.freighterApi.setAllowed(); } catch(e) {}
+                    try { 
+                        const isAllowed = await window.freighterApi.isAllowed(); 
+                        if (!isAllowed) await window.freighterApi.setAllowed(); 
+                    } catch(e) {}
+                    
                     const publicKey = await window.freighterApi.getPublicKey();
-                    purchaseIdentity = publicKey;
 
                     let sourceAccount;
-                    try { sourceAccount = await server.loadAccount(publicKey); } catch(err) {
+                    try { 
+                        sourceAccount = await server.loadAccount(publicKey); 
+                    } catch(err) {
                         alert('La cuenta conectada no existe o no tiene fondos en la red seleccionada.');
-                        btn.innerHTML = originalHTML; btn.disabled = false; return;
+                        btn.innerHTML = originalHTML; 
+                        btn.disabled = false; 
+                        return;
                     }
 
                     const baseFee = await server.fetchBaseFee();
 
-                    let destinoExiste = true; try { await server.loadAccount(destino); } catch (e) { destinoExiste = false; }
-                    // Verificar balance mínimo
+                    let destinoExiste = true; 
+                    try { 
+                        await server.loadAccount(destino); 
+                    } catch (e) { 
+                        destinoExiste = false; 
+                    }
+
                     const xlmBalObj = sourceAccount.balances.find(b => b.asset_type === 'native');
                     const xlmBalance = xlmBalObj ? parseFloat(xlmBalObj.balance) : 0;
-                    const minReserve = 1.0; const needed = priceAmount + minReserve + 0.0001;
+                    const minReserve = 1.0; 
+                    const needed = priceAmount + minReserve + 0.0001;
+                    
                     if (xlmBalance < needed) {
                         alert(`Saldo insuficiente. Tu balance: ${xlmBalance} XLM. Necesitas al menos ${needed.toFixed(7)} XLM.`);
-                        btn.innerHTML = originalHTML; btn.disabled = false; return;
+                        btn.innerHTML = originalHTML; 
+                        btn.disabled = false; 
+                        return;
                     }
 
                     const op = destinoExiste
@@ -384,24 +420,32 @@
 
                     alert(`✅ ¡Felicidades! Has adquirido: ${course.title}\n\n💰 Se descontaron ${course.price} XLM de tu cuenta.\n\n🔗 Hash: ${result.hash.substring(0, 20)}...`);
 
-                    // Registrar compra por identidad pública de Freighter
-                    recordPurchase(course.id, purchaseIdentity);
-                    // Refrescar UI
+                    // Guardar compra en localStorage
+                    addToPurchased(course.id);
+                    
+                    // Actualizar solo la sección de cursos adquiridos
                     renderPurchased();
-                    renderCourses(courses);
+                    
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
                     return;
                 }
 
-                // Sin Freighter: intentar usar secreto local
                 const storedSecret = localStorage.getItem('stellarSecret');
                 if (storedSecret) {
                     const keypair = StellarSdk.Keypair.fromSecret(storedSecret);
                     const publicKey = keypair.publicKey();
-                    purchaseIdentity = publicKey;
 
                     const sourceAccount = await server.loadAccount(publicKey);
                     const baseFee = await server.fetchBaseFee();
-                    let destinoExiste = true; try { await server.loadAccount(destino); } catch (e) { destinoExiste = false; }
+                    
+                    let destinoExiste = true; 
+                    try { 
+                        await server.loadAccount(destino); 
+                    } catch (e) { 
+                        destinoExiste = false; 
+                    }
+
                     const op = destinoExiste
                         ? StellarSdk.Operation.payment({ destination: destino, asset: StellarSdk.Asset.native(), amount: course.price.toString() })
                         : StellarSdk.Operation.createAccount({ destination: destino, startingBalance: priceAmount >= 1 ? priceAmount.toString() : '1' });
@@ -416,14 +460,19 @@
 
                     alert(`✅ ¡Felicidades! Has adquirido: ${course.title}\n\n💰 Se descontaron ${course.price} XLM de tu cuenta.\n\n🔗 Hash: ${result.hash.substring(0, 20)}...`);
 
-                    recordPurchase(course.id, purchaseIdentity);
+                    addToPurchased(course.id);
                     renderPurchased();
-                    renderCourses(courses);
+                    
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
                     return;
                 }
 
                 alert('No hay Freighter ni clave local disponible para firmar la transacción. Conecta tu wallet o inicia sesión/crea cuenta.');
-                btn.innerHTML = originalHTML; btn.disabled = false; return;
+                btn.innerHTML = originalHTML; 
+                btn.disabled = false; 
+                return;
+                
             } catch (error) {
                 console.error('❌ ERROR EN LA TRANSACCIÓN', error);
                 let errorMessage = 'Error desconocido al procesar el pago';
@@ -449,32 +498,32 @@
                     errorMessage = error.message;
                 }
                 alert(errorMessage + "\n\n🔍 Revisa la consola del navegador (F12) para más detalles.");
-                btn.innerHTML = originalHTML; btn.disabled = false;
+                btn.innerHTML = originalHTML; 
+                btn.disabled = false;
             }
         }
 
         function init() {
             createParticles();
-            // Intentar obtener pubKey si hay Freighter, para mejorar identificación
             ensurePublicKeyFromFreighter().finally(() => {
                 renderPurchased();
                 renderCourses(courses);
             });
-            document.getElementById('search-input').addEventListener('input', () => {
-                filterCourses();
-                // También actualizamos el estado de botones vs accesos según filtro
-            });
+            
+            document.getElementById('search-input').addEventListener('input', filterCourses);
+            
             document.addEventListener('scroll', () => {
                 const scrolled = window.pageYOffset;
                 const parallax = document.querySelector('.bg-particles');
-                const speed = scrolled * 0.3; parallax.style.transform = `translateY(${speed}px)`;
+                const speed = scrolled * 0.3; 
+                parallax.style.transform = `translateY(${speed}px)`;
             });
 
             const hasFreighter = !!window.freighterApi;
             const hasPublic = !!localStorage.getItem('stellarPublic');
             if (hasFreighter) { console.log('✓ Freighter detectado'); }
-            else if (hasPublic) { console.log('✓ Cuenta pública encontrada:', localStorage.getItem('stellarPublic')); }
-            else { console.warn('⚠️ No se encontró Freighter ni cuenta pública en localStorage'); }
+            else if (hasPublic) { console.log('✓ Cuenta pública encontrada'); }
+            else { console.warn('⚠️ No se encontró Freighter ni cuenta pública'); }
         }
 
         document.addEventListener('DOMContentLoaded', init);
