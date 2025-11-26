@@ -436,11 +436,15 @@
       // Redirigir según el rol
       setTimeout(() => { 
         if (selectedRole === 'maestro') {
-          window.location.href = "CursoM.html";
+          console.log('Redirigiendo a Maestro.html');
+          window.location.href = './Maestro.html';
+        } else if (selectedRole === 'alumno') {
+          console.log('Redirigiendo a Inicio.html');
+          window.location.href = './Inicio.html';
         } else {
-          window.location.href = "inicio.html";
+          alert('Error: Rol no reconocido');
         }
-      }, 1000);
+      }, 500);
     });
 
     // Botones de acciones del contrato

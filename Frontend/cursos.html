@@ -103,6 +103,30 @@
             text-align: center;
             display: inline-block;
         }
+        .share-button {
+            background: var(--secondary-gradient);
+            border: none;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-size: 0.95rem;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.2s ease;
+        }
+        .share-button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245, 105, 145, 0.2); }
+
+        /* Modal de compartir */
+        .share-modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); z-index: 9999; }
+        .share-modal.active { display:flex; }
+        .share-modal .panel { background: white; color: #1f2937; padding: 20px; border-radius: 12px; max-width: 520px; width: 95%; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .share-modal .panel h4 { margin-bottom: 8px; font-weight: 700; }
+        .share-link { display:flex; gap:8px; align-items:center; margin-top:12px; }
+        .share-link input { flex:1; padding:8px 10px; border-radius:8px; border:1px solid #e5e7eb; }
+        .copy-btn { background: var(--accent-gradient); color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; }
+        .whatsapp-btn { background: #25D366; margin-left:6px; box-shadow: 0 4px 12px rgba(37,211,102,0.15); }
+
         .course-link { text-decoration: none; }
         .course-button:disabled { opacity: 0.6; cursor: not-allowed; }
         .course-button::before {
@@ -167,6 +191,22 @@
     </section>
     
     <main id="courses-container"></main>
+
+    <!-- Modal compartir -->
+    <div id="share-modal" class="share-modal" aria-hidden="true">
+        <div class="panel">
+            <h4 id="share-title">Compartir curso</h4>
+            <p id="share-desc">Comparte este enlace para que otros ingresen al curso compartido.</p>
+            <div class="share-link">
+                <input id="share-input" readonly />
+                <button id="copy-share" class="copy-btn">Copiar</button>
+                <button id="share-whatsapp" class="copy-btn whatsapp-btn">WhatsApp</button>
+            </div>
+            <div style="margin-top:12px; text-align:right;">
+                <button id="close-share" class="course-button" style="background:#e5e7eb;color:#1f2937;margin-right:8px;">Cerrar</button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/11.2.2/stellar-sdk.min.js"></script>
     <script>
@@ -272,6 +312,12 @@
                 link.className = 'course-link';
                 link.textContent = 'Acceder al curso';
                 content.appendChild(link);
+                // Botón compartir para cursos comprados
+                const shareBtn = document.createElement('button');
+                shareBtn.className = 'share-button';
+                shareBtn.textContent = 'Compartir';
+                shareBtn.addEventListener('click', () => openShareModal(course));
+                content.appendChild(shareBtn);
             } else {
                 const btn = document.createElement('button');
                 btn.className = 'course-button';
@@ -426,6 +472,9 @@
                     // Actualizar solo la sección de cursos adquiridos
                     renderPurchased();
                     
+                    // Abrir modal de compartir inmediatamente
+                    setTimeout(() => openShareModal(course), 300);
+
                     btn.innerHTML = originalHTML;
                     btn.disabled = false;
                     return;
@@ -462,7 +511,9 @@
 
                     addToPurchased(course.id);
                     renderPurchased();
-                    
+                    // Abrir modal de compartir inmediatamente
+                    setTimeout(() => openShareModal(course), 300);
+
                     btn.innerHTML = originalHTML;
                     btn.disabled = false;
                     return;
@@ -523,8 +574,99 @@
             const hasPublic = !!localStorage.getItem('stellarPublic');
             if (hasFreighter) { console.log('✓ Freighter detectado'); }
             else if (hasPublic) { console.log('✓ Cuenta pública encontrada'); }
-            else { console.warn('⚠️ No se encontró Freighter ni cuenta pública'); }
+            else { console.warn('⚠ No se encontró Freighter ni cuenta pública'); }
         }
+
+        // ===== Funciones de compartir =====
+        function generateShareToken(courseId) {
+            try {
+                const payload = { courseId: courseId, t: Date.now() };
+                return btoa(JSON.stringify(payload));
+            } catch (e) { return null; }
+        }
+
+        function buildShareLink(courseId, token) {
+            // Link relativo para abrir directamente la página del curso con el token
+            return `materia.html?id=${courseId}&shared=${encodeURIComponent(token)}`;
+        }
+
+        function openShareModal(course) {
+            const modal = document.getElementById('share-modal');
+            const input = document.getElementById('share-input');
+            const title = document.getElementById('share-title');
+            const desc = document.getElementById('share-desc');
+            const token = generateShareToken(course.id);
+            const link = buildShareLink(course.id, token);
+            title.textContent = `Compartir: ${course.title}`;
+            desc.textContent = 'Comparte este enlace para que otras personas accedan al curso.';
+            input.value = link;
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeShareModal() {
+            const modal = document.getElementById('share-modal');
+            modal.classList.remove('active');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        document.addEventListener('click', (e)=>{
+            if (e.target && e.target.id === 'copy-share') {
+                const input = document.getElementById('share-input');
+                input.select();
+                try {
+                    document.execCommand('copy');
+                    alert('Enlace copiado al portapapeles');
+                } catch (err) {
+                    alert('No se pudo copiar automáticamente. Selecciona y copia manualmente.');
+                }
+            }
+            if (e.target && e.target.id === 'share-whatsapp') {
+                const input = document.getElementById('share-input');
+                const relLink = input.value || '';
+                const fullLink = (relLink.startsWith('http') ? relLink : window.location.origin + '/' + relLink);
+                const message = `Te comparto este curso: ${fullLink}`;
+                const waNumber = '9532783787';
+                const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+                window.open(waUrl, '_blank');
+            }
+            if (e.target && e.target.id === 'close-share') {
+                closeShareModal();
+            }
+        });
+
+        // Detectar parámetro shared en la URL y mostrar información
+        function checkSharedParam() {
+            const params = new URLSearchParams(window.location.search);
+            const shared = params.get('shared');
+            if (!shared) return;
+            try {
+                const decoded = JSON.parse(atob(decodeURIComponent(shared)));
+                const course = courses.find(c => c.id === decoded.courseId);
+                if (!course) return;
+                // Crear banner informativo en la parte superior
+                const banner = document.createElement('div');
+                banner.style.background = 'rgba(255,255,255,0.95)';
+                banner.style.padding = '12px 20px';
+                banner.style.borderBottom = '1px solid #e5e7eb';
+                banner.style.display = 'flex';
+                banner.style.justifyContent = 'space-between';
+                banner.style.alignItems = 'center';
+                banner.innerHTML = `<div>Has abierto un <strong>curso compartido</strong>: ${course.title}</div>`;
+                const btn = document.createElement('a');
+                btn.className = 'course-button';
+                btn.textContent = 'Ir al curso';
+                btn.href = `materia.html?id=${course.id}&shared=${encodeURIComponent(shared)}`;
+                banner.appendChild(btn);
+                document.body.insertBefore(banner, document.querySelector('header').nextSibling);
+            } catch (e) {
+                console.warn('Token compartido inválido', e);
+            }
+        }
+
+        // Ejecutar checkSharedParam en init
+        const _oldInit = init;
+        init = function() { _oldInit(); checkSharedParam(); };
 
         document.addEventListener('DOMContentLoaded', init);
     </script>
