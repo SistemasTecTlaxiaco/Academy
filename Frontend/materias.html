@@ -571,4 +571,364 @@
             font-weight: bold;
             margin-top: -10px;
         }
+
+        .close:hover,
+        .close:focus {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-particles"></div>
     
+    <header>
+        <h1>Materias</h1>
+        <nav>
+            <a href="Inicio.html">🏠 Inicio</a>
+            <a href="cursos.html">📚 Cursos</a>
+            <a href="niveles.html" class="active">🎯 Niveles</a>
+            <a href="materias.html">📖 Materias</a>
+            <a href="cetificado.html">🏆 Certificados</a>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="glass-card level-card" aria-label="Level Selection Card">
+            <h2>🎓 Nivel Educativo</h2>
+            <div class="current-level" id="currentLevel">Primaria</div>
+            <div class="levels">
+                <div class="level active" data-level="primaria">🌱 Primaria</div>
+                <div class="level" data-level="secundaria">🌿 Secundaria</div>
+                <div class="level" data-level="medio-superior">🌳 Medio Superior</div>
+                <div class="level" data-level="superior">🏛️ Superior</div>
+            </div>
+        </section>
+        
+        <section class="subjects glass-card" aria-label="Subjects List">
+            <h3 id="subjectsTitle">📚 Materias - Primaria</h3>
+            <div id="subjectsList">
+                <!-- Subjects will be inserted here -->
+            </div>
+        </section>
+        
+        <div class="glass-card">
+            <section class="actions-panel" aria-label="Education Actions">
+                <button class="action-btn" id="studyBtn">📖 Estudiar</button>
+                <button class="action-btn" id="examBtn">📝 Exámenes</button>
+                <button class="action-btn" id="resourcesBtn">💡 Recursos</button>
+                <button class="action-btn" id="progressBtn">📊 Mi Progreso</button>
+            </section>
+            
+            <section class="progress-info" aria-label="Progress Information">
+                <h3>📈 Estadísticas</h3>
+                <div class="progress-stats">
+                    <div class="stat-item">
+                        <span>✅ Materias Completadas</span>
+                        <span class="stat-value" id="completedSubjects">6/8</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>⭐ Promedio General</span>
+                        <span class="stat-value" id="averageGrade">8.8</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🏆 Certificaciones</span>
+                        <span class="stat-value" id="certifications">2</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+       
+    </main>
+
+    <!-- Chart container -->
+    <section class="chart-container glass-card">
+        <h3>📊 Progreso por materia</h3>
+        <canvas id="progressChartCanvas" width="800" height="240"></canvas>
+    </section>
+
+    <!-- Modal -->
+    <div id="actionModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Título</h2>
+            <p id="modalContent">Contenido del modal</p>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const container = document.querySelector('.bg-particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Educational data by levels
+        const educationalData = {
+            primaria: {
+                title: "📚 Materias - Primaria",
+                subjects: [
+                    { name: "Matemáticas", description: "Aritmética básica, sumas, restas y geometría elemental", progress: 95, icon: "🔢" },
+                    { name: "Español", description: "Lectura comprensiva, escritura y gramática básica", progress: 88, icon: "📖" },
+                    { name: "Ciencias Naturales", description: "Exploración del mundo natural y experimentos sencillos", progress: 92, icon: "🔬" },
+                    { name: "Historia", description: "Historias de México y el mundo para niños", progress: 85, icon: "🏛️" },
+                    { name: "Geografía", description: "Continentes, países, capitales y mapas básicos", progress: 78, icon: "🌍" },
+                    { name: "Educación Física", description: "Deportes, juegos y desarrollo motor", progress: 90, icon: "🏃" },
+                    { name: "Educación Artística", description: "Música, danza, dibujo y expresión creativa", progress: 82, icon: "🎨" },
+                    { name: "Educación Cívica", description: "Valores, respeto y convivencia ciudadana", progress: 87, icon: "⚖️" }
+                ],
+                stats: {
+                    completed: "6/8",
+                    average: "8.8",
+                    certifications: "2"
+                }
+            },
+            secundaria: {
+                title: "📚 Materias - Secundaria",
+                subjects: [
+                    { name: "Matemáticas", description: "Álgebra, geometría y introducción al cálculo", progress: 87, icon: "📐" },
+                    { name: "Español", description: "Literatura, análisis de textos y redacción avanzada", progress: 91, icon: "📚" },
+                    { name: "Inglés", description: "Gramática intermedia y conversación básica", progress: 79, icon: "🗣️" },
+                    { name: "Biología", description: "Sistemas del cuerpo humano y ecología", progress: 93, icon: "🧬" },
+                    { name: "Física", description: "Mecánica, electricidad y magnetismo básico", progress: 76, icon: "⚛️" },
+                    { name: "Química", description: "Tabla periódica y reacciones químicas", progress: 84, icon: "🧪" },
+                    { name: "Historia", description: "Historia universal y civilizaciones antiguas", progress: 89, icon: "📜" },
+                    { name: "Geografía", description: "Geografía física, humana y económica", progress: 81, icon: "🗺️" },
+                    { name: "Formación Cívica", description: "Ética, democracia y derechos humanos", progress: 88, icon: "🏛️" }
+                ],
+                stats: {
+                    completed: "7/9",
+                    average: "8.5",
+                    certifications: "3"
+                }
+            },
+            "medio-superior": {
+                title: "📚 Materias - Medio Superior",
+                subjects: [
+                    { name: "Matemáticas IV", description: "Cálculo diferencial e integral aplicado", progress: 82, icon: "∫" },
+                    { name: "Física II", description: "Ondas, óptica y física moderna avanzada", progress: 78, icon: "🌊" },
+                    { name: "Química II", description: "Química orgánica e inorgánica aplicada", progress: 85, icon: "⚗️" },
+                    { name: "Biología II", description: "Genética, evolución y biotecnología", progress: 90, icon: "🧪" },
+                    { name: "Literatura", description: "Literatura universal y análisis crítico", progress: 88, icon: "📔" },
+                    { name: "Inglés Avanzado", description: "Conversación fluida y escritura académica", progress: 86, icon: "🌐" },
+                    { name: "Historia Universal", description: "Civilizaciones, guerras mundiales y globalización", progress: 83, icon: "🌍" },
+                    { name: "Filosofía", description: "Pensamiento crítico, lógica y ética filosófica", progress: 79, icon: "🤔" },
+                    { name: "Informática", description: "Programación, bases de datos y desarrollo web", progress: 92, icon: "💻" }
+                ],
+                stats: {
+                    completed: "8/9",
+                    average: "8.9",
+                    certifications: "4"
+                }
+            },
+            superior: {
+                title: "📚 Materias - Educación Superior",
+                subjects: [
+                    { name: "Cálculo Avanzado", description: "Cálculo multivariable, series y ecuaciones diferenciales", progress: 85, icon: "∞" },
+                    { name: "Estadística", description: "Probabilidad, inferencia y análisis estadístico", progress: 91, icon: "📊" },
+                    { name: "Metodología de Investigación", description: "Diseño experimental y métodos científicos", progress: 88, icon: "🔍" },
+                    { name: "Ética Profesional", description: "Responsabilidad social y código deontológico", progress: 94, icon: "🤝" },
+                    { name: "Seminario de Tesis", description: "Desarrollo de proyecto de investigación final", progress: 77, icon: "📄" },
+                    { name: "Inglés Técnico", description: "Terminología especializada y comunicación académica", progress: 89, icon: "🎓" },
+                    { name: "Tecnologías Emergentes", description: "IA, blockchain, IoT y tendencias tecnológicas", progress: 93, icon: "🚀" },
+                    { name: "Emprendimiento", description: "Modelos de negocio e innovación empresarial", progress: 86, icon: "💡" }
+                ],
+                stats: {
+                    completed: "7/8",
+                    average: "9.2",
+                    certifications: "5"
+                }
+            }
+        };
+
+        let currentLevelData = 'primaria';
+        let progressChart = null;
+
+        // Initialize the application
+        function init() {
+            createParticles();
+            setupEventListeners();
+            loadLevel('primaria');
+            createProgressChart();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Level selection
+            document.querySelectorAll('.level').forEach(level => {
+                level.addEventListener('click', () => {
+                    const levelName = level.dataset.level;
+                    loadLevel(levelName);
+                });
+            });
+
+            // Action buttons
+            document.getElementById('studyBtn').addEventListener('click', () => {
+                showModal('📖 Estudiar', 'Accede a materiales de estudio interactivos, videos educativos y ejercicios prácticos para reforzar tu aprendizaje.');
+            });
+
+            document.getElementById('examBtn').addEventListener('click', () => {
+                showModal('📝 Exámenes', 'Realiza evaluaciones personalizadas, simulacros de examen y recibe retroalimentación instantánea sobre tu desempeño.');
+            });
+
+            document.getElementById('resourcesBtn').addEventListener('click', () => {
+                showModal('💡 Recursos', 'Explora nuestra biblioteca digital con libros, artículos, calculadoras educativas y herramientas de apoyo académico.');
+            });
+
+            document.getElementById('progressBtn').addEventListener('click', () => {
+                showModal('📊 Mi Progreso', 'Visualiza tu avance académico detallado, estadísticas de rendimiento y objetivos de aprendizaje cumplidos.');
+            });
+
+            // Modal close
+            document.querySelector('.close').addEventListener('click', () => {
+                document.getElementById('actionModal').style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                const modal = document.getElementById('actionModal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Load level data
+        function loadLevel(levelName) {
+            currentLevelData = levelName;
+            const data = educationalData[levelName];
+            
+            // Update current level display
+            document.getElementById('currentLevel').textContent = 
+                levelName.charAt(0).toUpperCase() + levelName.slice(1).replace('-', ' ');
+            
+            // Update active level
+            document.querySelectorAll('.level').forEach(level => {
+                level.classList.remove('active');
+                if (level.dataset.level === levelName) {
+                    level.classList.add('active');
+                }
+            });
+            
+            // Update subjects title
+            document.getElementById('subjectsTitle').textContent = data.title;
+            
+            // Update subjects list
+            const subjectsList = document.getElementById('subjectsList');
+            subjectsList.innerHTML = '';
+            
+            data.subjects.forEach(subject => {
+                const subjectDiv = document.createElement('div');
+                subjectDiv.className = 'subject-item';
+                
+                const progressClass = subject.progress >= 85 ? 'high' : 
+                                    subject.progress >= 70 ? 'medium' : 'low';
+                
+                subjectDiv.innerHTML = `
+                    <div class="subject-icon">${subject.icon}</div>
+                    <div class="subject-details">
+                        <div class="subject-name">${subject.name}</div>
+                        <div class="subject-description">${subject.description}</div>
+                    </div>
+                    <div class="subject-progress">
+                        <div class="progress-circle ${progressClass}" style="--progress: ${subject.progress * 3.6}deg;">
+                            ${subject.progress}%
+                        </div>
+                        <div class="progress-text">Progreso</div>
+                    </div>
+                `;
+                
+                subjectsList.appendChild(subjectDiv);
+            });
+            
+            // Update stats
+            document.getElementById('completedSubjects').textContent = data.stats.completed;
+            document.getElementById('averageGrade').textContent = data.stats.average;
+            document.getElementById('certifications').textContent = data.stats.certifications;
+            
+            // Update chart
+            updateProgressChart(data.subjects);
+        }
+
+        // Show modal
+        function showModal(title, content) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalContent').textContent = content;
+            document.getElementById('actionModal').style.display = 'block';
+        }
+
+        // Create and initialize progress chart
+        function createProgressChart() {
+            const canvas = document.getElementById('progressChartCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            progressChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Progreso (%)',
+                        data: [],
+                        backgroundColor: 'rgba(59,130,246,0.7)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update chart with subjects data
+        function updateProgressChart(subjects) {
+            if (!progressChart || !subjects) return;
+            const labels = subjects.map(s => s.name);
+            const data = subjects.map(s => s.progress);
+            progressChart.data.labels = labels;
+            progressChart.data.datasets[0].data = data;
+            progressChart.update();
+        }
+
+     
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Add smooth scrolling for better UX
+        document.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.bg-particles');
+            const speed = scrolled * 0.5;
+            if (parallax) parallax.style.transform = `translateY(${speed}px)`;
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('actionModal');
+                if (modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
