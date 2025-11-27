@@ -365,6 +365,14 @@ function escapeHtml(str=''){
    DATOS INICIALES
    =========================== */
 function initData(){
+  // Intentar cargar datos persistidos
+  try {
+    const storedM = localStorage.getItem('MATERIAS');
+    const storedC = localStorage.getItem('CURSOS');
+    if (storedM) MATERIAS = JSON.parse(storedM);
+    if (storedC) CURSOS = JSON.parse(storedC);
+  } catch(e) { console.warn('No se pudo cargar datos de localStorage', e); }
+
   if(MATERIAS.length === 0){
     MATERIAS = [
       { 
@@ -421,7 +429,11 @@ function initData(){
       }
     ];
   }
+  // Guardar iniciales en localStorage
+  try { localStorage.setItem('MATERIAS', JSON.stringify(MATERIAS)); } catch(e){}
+  try { localStorage.setItem('CURSOS', JSON.stringify(CURSOS)); } catch(e){}
 }
+
 
 /* ===========================
    NAVEGACIÓN
@@ -438,12 +450,21 @@ function navSetActive(view){
 
 function showView(view){
   document.querySelectorAll('main section[id^="view-"]').forEach(s => s.classList.add('hidden'));
-  document.getElementById('view-' + view).classList.remove('hidden');
+  const target = document.getElementById('view-' + view);
+  if (!target) {
+    console.warn(`Vista solicitada 'view-${view}' no encontrada en el DOM.`);
+    // dejar la vista actual (inicio) visible si la solicitada no existe
+    const fallback = document.getElementById('view-inicio');
+    if (fallback) fallback.classList.remove('hidden');
+    navSetActive('inicio');
+    return;
+  }
+  target.classList.remove('hidden');
   navSetActive(view);
-  
-  if(view === 'inicio'){ renderInicio() }
-  if(view === 'cursos'){ renderCursosGrid() }
-  if(view === 'materias'){ renderMateriasGrid() }
+
+  if(view === 'inicio'){ renderInicio(); }
+  if(view === 'cursos'){ renderCursosGrid(); }
+  if(view === 'materias'){ renderMateriasGrid(); }
 }
 
 /* ===========================
@@ -505,6 +526,10 @@ function renderInicio(){
    =========================== */
 function renderCursosGrid(){
   const cont = document.getElementById('grid-cursos');
+  if (!cont) {
+    console.warn('renderCursosGrid: elemento #grid-cursos no encontrado; omitiendo render.');
+    return;
+  }
   cont.innerHTML = '';
 
   if(CURSOS.length === 0){
@@ -539,6 +564,10 @@ function renderCursosGrid(){
    =========================== */
 function renderMateriasGrid(){
   const cont = document.getElementById('grid-materias');
+  if (!cont) {
+    console.warn('renderMateriasGrid: elemento #grid-materias no encontrado; omitiendo render.');
+    return;
+  }
   cont.innerHTML = '';
   
   if(MATERIAS.length === 0){
@@ -620,6 +649,8 @@ async function saveCourse(){
         imagen: imgData, 
         materiaId 
       };
+      // Persistir cambios
+        try { localStorage.setItem('CURSOS', JSON.stringify(CURSOS)); } catch(e){}
       closeModal('modal-course');
       renderCursosGrid();
       renderInicio();
@@ -637,6 +668,8 @@ async function saveCourse(){
     materiaId 
   };
   CURSOS.push(nuevo);
+  // Persistir nuevo curso
+  try { localStorage.setItem('CURSOS', JSON.stringify(CURSOS)); } catch(e){}
   closeModal('modal-course');
   renderCursosGrid();
   renderInicio();
@@ -660,6 +693,7 @@ function editCourse(id){
 function deleteCourse(id){
   if(!confirm('¿Estás seguro de eliminar este curso?')) return;
   CURSOS = CURSOS.filter(c => c.id !== id);
+  try { localStorage.setItem('CURSOS', JSON.stringify(CURSOS)); } catch(e){}
   renderCursosGrid();
   renderInicio();
 }
@@ -711,6 +745,7 @@ async function saveMateria(){
         nivel, 
         imagen: imgData 
       };
+        try { localStorage.setItem('MATERIAS', JSON.stringify(MATERIAS)); } catch(e){}
       closeModal('modal-materia');
       renderMateriasGrid();
       renderInicio();
@@ -725,6 +760,7 @@ async function saveMateria(){
     nivel, 
     imagen: imgData 
   });
+  try { localStorage.setItem('MATERIAS', JSON.stringify(MATERIAS)); } catch(e){}
   closeModal('modal-materia');
   renderMateriasGrid();
   renderInicio();
@@ -757,6 +793,7 @@ function deleteMateria(id){
   }
   
   MATERIAS = MATERIAS.filter(m => m.id !== id);
+  try { localStorage.setItem('MATERIAS', JSON.stringify(MATERIAS)); } catch(e){}
   renderMateriasGrid();
   renderInicio();
   renderCursosGrid(); // Actualizar cursos también
@@ -802,30 +839,42 @@ document.addEventListener('DOMContentLoaded', () => {
   showView('inicio');
 
   // Botones de creación rápida desde inicio
-  document.getElementById('btn-new-course-quick').addEventListener('click', openCreateCourse);
-  document.getElementById('btn-new-materia-quick').addEventListener('click', openCreateMateria);
+  const btnNewCourseQuick = document.getElementById('btn-new-course-quick');
+  if (btnNewCourseQuick) btnNewCourseQuick.addEventListener('click', openCreateCourse);
+  const btnNewMateriaQuick = document.getElementById('btn-new-materia-quick');
+  if (btnNewMateriaQuick) btnNewMateriaQuick.addEventListener('click', openCreateMateria);
 
-  // Botones de vista Cursos
-  document.getElementById('open-create-course').addEventListener('click', openCreateCourse);
+  // Botones de vista Cursos (pueden no existir en algunas vistas, proteger)
+  const openCreateCourseBtn = document.getElementById('open-create-course');
+  if (openCreateCourseBtn) openCreateCourseBtn.addEventListener('click', openCreateCourse);
 
   // Botones de vista Materias
-  document.getElementById('open-create-materia').addEventListener('click', openCreateMateria);
+  const openCreateMateriaBtn = document.getElementById('open-create-materia');
+  if (openCreateMateriaBtn) openCreateMateriaBtn.addEventListener('click', openCreateMateria);
 
-  // Modal Curso - Acciones
-  document.getElementById('cancel-course').addEventListener('click', ()=> closeModal('modal-course'));
-  document.getElementById('save-course').addEventListener('click', saveCourse);
-  document.getElementById('course-img-file').addEventListener('change', (e)=> {
+  // Modal Curso - Acciones (verificar existencia)
+  const cancelCourseBtn = document.getElementById('cancel-course');
+  if (cancelCourseBtn) cancelCourseBtn.addEventListener('click', ()=> closeModal('modal-course'));
+  const saveCourseBtn = document.getElementById('save-course');
+  if (saveCourseBtn) saveCourseBtn.addEventListener('click', saveCourse);
+  const courseImgFile = document.getElementById('course-img-file');
+  if (courseImgFile) courseImgFile.addEventListener('change', (e)=> {
     if(e.target.files && e.target.files[0]) {
-      document.getElementById('course-img-url').value = '';
+      const courseImgUrl = document.getElementById('course-img-url');
+      if (courseImgUrl) courseImgUrl.value = '';
     }
   });
 
-  // Modal Materia - Acciones
-  document.getElementById('cancel-materia').addEventListener('click', ()=> closeModal('modal-materia'));
-  document.getElementById('save-materia').addEventListener('click', saveMateria);
-  document.getElementById('materia-img-file').addEventListener('change', (e)=> {
+  // Modal Materia - Acciones (verificar existencia)
+  const cancelMateriaBtn = document.getElementById('cancel-materia');
+  if (cancelMateriaBtn) cancelMateriaBtn.addEventListener('click', ()=> closeModal('modal-materia'));
+  const saveMateriaBtn = document.getElementById('save-materia');
+  if (saveMateriaBtn) saveMateriaBtn.addEventListener('click', saveMateria);
+  const materiaImgFile = document.getElementById('materia-img-file');
+  if (materiaImgFile) materiaImgFile.addEventListener('change', (e)=> {
     if(e.target.files && e.target.files[0]) {
-      document.getElementById('materia-img-url').value = '';
+      const materiaImgUrl = document.getElementById('materia-img-url');
+      if (materiaImgUrl) materiaImgUrl.value = '';
     }
   });
 

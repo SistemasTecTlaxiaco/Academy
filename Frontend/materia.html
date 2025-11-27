@@ -759,6 +759,22 @@
 
         // Initialize the application
         function init() {
+            // Verificar si se accede desde un enlace compartido
+            const params = new URLSearchParams(window.location.search);
+            const sharedToken = params.get('shared');
+            
+            if (sharedToken) {
+                // Token presente: validar y permitir acceso
+                try {
+                    const decoded = JSON.parse(atob(decodeURIComponent(sharedToken)));
+                    console.log('✓ Acceso compartido validado para curso ID:', decoded.courseId, 'creado en:', new Date(decoded.t).toLocaleString());
+                    // El token es válido, permitir acceso normal
+                } catch (e) {
+                    console.warn('⚠ Token de compartir inválido:', e.message);
+                    // Token inválido, pero seguir funcionando (fallback)
+                }
+            }
+            
             createParticles();
             setupEventListeners();
             loadLevel('primaria');

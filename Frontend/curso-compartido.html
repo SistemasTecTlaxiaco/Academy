@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Curso</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            color: #2d3748;
+        }
+
+        header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            margin-left: 30px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .course-header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .course-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .course-info {
+            padding: 40px;
+            color: white;
+        }
+
+        .course-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .course-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 24px;
+        }
+
+        .course-meta {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+
+        .course-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .content-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .content-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .content-list li {
+            padding: 12px 0;
+            color: rgba(255, 255, 255, 0.85);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-list li:before {
+            content: "✓";
+            color: #4facfe;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        .shared-badge {
+            display: inline-block;
+            background: rgba(79, 172, 254, 0.2);
+            border: 1px solid #4facfe;
+            color: #4facfe;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .course-content {
+                grid-template-columns: 1fr;
+            }
+
+            .course-title {
+                font-size: 1.8rem;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav a {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🎓 Curso Compartido</h1>
+        <nav>
+            <a href="Index.html">🏠 Inicio</a>
+            <a href="cursos.html">📚 Cursos</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div id="shared-badge"></div>
+        <div id="error-message"></div>
+
+        <div class="course-header">
+            <img id="courseImage" class="course-image" src="" alt="Curso">
+            <div class="course-info">
+                <h1 class="course-title" id="courseTitle">Cargando curso...</h1>
+                <p class="course-description" id="courseDescription">Aguarda un momento...</p>
+
+                <div class="course-meta">
+                    <div class="meta-item">
+                        <span>⏱️</span>
+                        <span id="courseDuration">-- horas</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>💰</span>
+                        <span id="coursePrice">--</span>
+                    </div>
+                    <div class="meta-item">
+                        <span>📖</span>
+                        <span id="courseCategory">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="course-content">
+            <div class="content-section">
+                <div class="section-title">📚 Contenido del Curso</div>
+                <ul class="content-list">
+                    <li>Lecciones interactivas paso a paso</li>
+                    <li>Videos educativos de alta calidad</li>
+                    <li>Ejercicios prácticos y proyectos</li>
+                    <li>Material de referencia descargable</li>
+                    <li>Acceso de por vida al contenido</li>
+                </ul>
+            </div>
+
+            <div class="content-section">
+                <div class="section-title">🎯 Lo que Aprenderás</div>
+                <ul class="content-list">
+                    <li>Conceptos fundamentales y avanzados</li>
+                    <li>Aplicaciones prácticas reales</li>
+                    <li>Mejores prácticas de la industria</li>
+                    <li>Resolución de problemas complejos</li>
+                    <li>Certificación al completar el curso</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 60px;">
+            <button class="btn-primary" onclick="enrollCourse()">✨ Acceder al Curso</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/11.2.2/stellar-sdk.min.js"></script>
+    <script>
+        let currentCourse = null;
+        let courses = [];
+        let sharedToken = null;
+
+        // Cargar cursos desde localStorage (creados en Maestro)
+        function loadCourses() {
+            try {
+                const stored = localStorage.getItem('CURSOS');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    courses = parsed.map((c, idx) => ({
+                        id: c.id,
+                        title: c.titulo || c.title || ('Curso ' + (idx + 1)),
+                        description: c.descripcion || c.description || '',
+                        image: c.imagen || c.image || 'https://via.placeholder.com/800x400?text=Curso',
+                        price: (c.precio != null) ? c.precio : (c.price != null ? c.price : 0),
+                        duration: c.duracion || 0,
+                        category: c.categoria || 'General'
+                    }));
+                }
+            } catch (e) {
+                console.warn('Error cargando cursos:', e);
+            }
+        }
+
+        // Obtener curso por ID
+        function getCourseById(courseId) {
+            return courses.find(c => String(c.id) === String(courseId));
+        }
+
+        // Mostrar curso
+        function displayCourse(course) {
+            document.getElementById('courseTitle').textContent = course.title;
+            document.getElementById('courseDescription').textContent = course.description;
+            document.getElementById('courseImage').src = course.image;
+            document.getElementById('courseDuration').textContent = course.duration + ' horas';
+            document.getElementById('coursePrice').textContent = course.price + ' XLM';
+            document.getElementById('courseCategory').textContent = course.category;
+        }
+
+        // Mostrar badge de acceso compartido
+        function showSharedBadge() {
+            const badgeDiv = document.getElementById('shared-badge');
+            if (sharedToken) {
+                try {
+                    const decoded = JSON.parse(atob(decodeURIComponent(sharedToken)));
+                    const timestamp = new Date(decoded.t);
+                    badgeDiv.innerHTML = `<div class="shared-badge">✓ Este curso te fue compartido el ${timestamp.toLocaleDateString()} a las ${timestamp.toLocaleTimeString()}</div>`;
+                } catch (e) {
+                    badgeDiv.innerHTML = `<div class="shared-badge">✓ Este curso te fue compartido</div>`;
+                }
+            }
+        }
+
+        // Mostrar error
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.innerHTML = `<div class="error-message">⚠️ ${message}</div>`;
+        }
+
+        // Enrollarse (agregar a comprados)
+        function enrollCourse() {
+            if (!currentCourse) {
+                showError('No se pudo cargar la información del curso.');
+                return;
+            }
+
+            const pub = localStorage.getItem('stellarPublic');
+            const key = pub ? 'purchases_' + pub : 'purchases_guest';
+            let purchased = [];
+            try {
+                const stored = localStorage.getItem(key);
+                purchased = stored ? JSON.parse(stored) : [];
+            } catch (e) {
+                purchased = [];
+            }
+
+            const idStr = String(currentCourse.id);
+            if (!purchased.map(String).includes(idStr)) {
+                purchased.push(idStr);
+                localStorage.setItem(key, JSON.stringify(purchased));
+                alert(`✅ ¡Felicidades! Has accedido al curso: ${currentCourse.title}`);
+                // Redirigir a cursos (página del alumno)
+                window.location.href = 'cursos.html';
+            } else {
+                alert('Ya tienes acceso a este curso.');
+            }
+        }
+
+        // Inicializar
+        function init() {
+            const params = new URLSearchParams(window.location.search);
+            const courseId = params.get('id');
+            sharedToken = params.get('shared');
+
+            loadCourses();
+
+            if (!courseId) {
+                showError('No se especificó un curso. El enlace puede estar incompleto o expirado.');
+                return;
+            }
+
+            currentCourse = getCourseById(courseId);
+            if (!currentCourse) {
+                showError(`No se encontró el curso solicitado (ID: ${courseId}).`);
+                return;
+            }
+
+            displayCourse(currentCourse);
+            showSharedBadge();
+
+            if (sharedToken) {
+                try {
+                    const decoded = JSON.parse(atob(decodeURIComponent(sharedToken)));
+                    console.log('✓ Acceso compartido validado para curso ID:', decoded.courseId);
+                } catch (e) {
+                    console.warn('⚠ Token de compartir inválido:', e.message);
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

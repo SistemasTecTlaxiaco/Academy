@@ -210,17 +210,42 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stellar-sdk/11.2.2/stellar-sdk.min.js"></script>
     <script>
-        // ===== Datos base de cursos =====
-        const courses = [
-            { id: 1, title: "Introducción a JavaScript", description: "Aprende los fundamentos de JavaScript desde cero, ideal para principiantes. Domina variables, funciones, eventos y manipulación del DOM.", image: "https://i.pinimg.com/736x/d0/32/34/d03234bfa8029236fbd88916fab35831.jpg", rating: 3.5, category: "Programación", price: 10 },
-            { id: 2, title: "Desarrollo Web con React", description: "Construye interfaces de usuario dinámicas con React y sus principales herramientas. Aprende hooks, contexto y manejo de estado.", image: "https://i.pinimg.com/736x/9b/4e/e0/9b4ee057076232fb57c48cf80947f8a7.jpg", rating: 5.0, category: "Frontend", price: 15 },
-            { id: 3, title: "Python para Ciencia de Datos", description: "Descubre cómo usar Python y librerías populares para análisis y visualización de datos. Pandas, NumPy, Matplotlib y más.", image: "https://i.pinimg.com/736x/2d/d8/03/2dd8031b5e88f0104d083e4ed6233bc0.jpg", rating: 4.2, category: "Data Science", price: 20 },
-            { id: 4, title: "Introducción a Machine Learning", description: "Conceptos básicos y técnicas fundamentales para iniciarse en Machine Learning. Algoritmos supervisados y no supervisados.", image: "https://i.pinimg.com/736x/5b/10/93/5b1093e848ffd5b7c018c57fe300da8d.jpg", rating: 2.8, category: "IA & ML", price: 25 },
-            { id: 5, title: "Diseño UX/UI Moderno", description: "Aprende los principios del diseño de experiencia e interfaces para productos digitales. Figma, prototipado y testing.", image: "https://images.unsplash.com/photo-1542831371-d531d36971e6?auto=format&fit=crop&w=600&q=80", rating: 4.6, category: "Diseño", price: 30 },
-            { id: 6, title: "Marketing Digital Estratégico", description: "Domina las técnicas más efectivas para promocionar productos y servicios en línea. SEO, SEM, redes sociales y analytics.", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80", rating: 3.9, category: "Marketing", price: 35 },
-            { id: 7, title: "Programación en Java Avanzado", description: "Aprende conceptos avanzados de Java para desarrollar aplicaciones complejas. Spring Framework, microservicios y arquitectura.", image: "https://images.unsplash.com/photo-1517433456452-f9633a875f6f?auto=format&fit=crop&w=600&q=80", rating: 2.5, category: "Backend", price: 40 },
-            { id: 8, title: "Blockchain y Criptomonedas", description: "Entiende la tecnología blockchain y cómo funcionan las criptomonedas hoy en día. Smart contracts y DeFi.", image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80", rating: 4.9, category: "Blockchain", price: 50 }
-        ];
+        // ===== Cursos: cargar desde localStorage si existen, sino usar ejemplos por defecto =====
+        let courses = [];
+        function loadCourses() {
+            // Intentar cargar desde la llave usada por Maestro: 'CURSOS'
+            try {
+                const stored = localStorage.getItem('CURSOS');
+                console.log('Academy(cursos): localStorage.CURSOS raw ->', stored);
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    console.log('Academy(cursos): parsed CURSOS ->', parsed && parsed.length ? parsed.length : 0);
+                    // Normalizar campos para este view
+                    courses = parsed.map((c, idx) => ({
+                        id: c.id != null ? c.id : (c.id || ('s_' + idx)),
+                        title: c.titulo || c.title || ('Curso ' + (idx+1)),
+                        description: c.descripcion || c.description || '',
+                        image: c.imagen || c.image || 'https://via.placeholder.com/800x400?text=Curso',
+                        rating: c.rating || 4.0,
+                        category: c.categoria || c.category || '',
+                        price: (c.precio != null) ? c.precio : (c.price != null ? c.price : 0)
+                    }));
+                    return;
+                }
+            } catch(e) { console.warn('No se pudo leer CURSOS desde localStorage', e); }
+
+            // Fallback: datos por defecto
+            courses = [
+                { id: 1, title: "Introducción a JavaScript", description: "Aprende los fundamentos de JavaScript desde cero, ideal para principiantes. Domina variables, funciones, eventos y manipulación del DOM.", image: "https://i.pinimg.com/736x/d0/32/34/d03234bfa8029236fbd88916fab35831.jpg", rating: 3.5, category: "Programación", price: 10 },
+                { id: 2, title: "Desarrollo Web con React", description: "Construye interfaces de usuario dinámicas con React y sus principales herramientas. Aprende hooks, contexto y manejo de estado.", image: "https://i.pinimg.com/736x/9b/4e/e0/9b4ee057076232fb57c48cf80947f8a7.jpg", rating: 5.0, category: "Frontend", price: 15 },
+                { id: 3, title: "Python para Ciencia de Datos", description: "Descubre cómo usar Python y librerías populares para análisis y visualización de datos. Pandas, NumPy, Matplotlib y más.", image: "https://i.pinimg.com/736x/2d/d8/03/2dd8031b5e88f0104d083e4ed6233bc0.jpg", rating: 4.2, category: "Data Science", price: 20 },
+                { id: 4, title: "Introducción a Machine Learning", description: "Conceptos básicos y técnicas fundamentales para iniciarse en Machine Learning. Algoritmos supervisados y no supervisados.", image: "https://i.pinimg.com/736x/5b/10/93/5b1093e848ffd5b7c018c57fe300da8d.jpg", rating: 2.8, category: "IA & ML", price: 25 },
+                { id: 5, title: "Diseño UX/UI Moderno", description: "Aprende los principios del diseño de experiencia e interfaces para productos digitales. Figma, prototipado y testing.", image: "https://images.unsplash.com/photo-1542831371-d531d36971e6?auto=format&fit=crop&w=600&q=80", rating: 4.6, category: "Diseño", price: 30 },
+                { id: 6, title: "Marketing Digital Estratégico", description: "Domina las técnicas más efectivas para promocionar productos y servicios en línea. SEO, SEM, redes sociales y analytics.", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80", rating: 3.9, category: "Marketing", price: 35 },
+                { id: 7, title: "Programación en Java Avanzado", description: "Aprende conceptos avanzados de Java para desarrollar aplicaciones complejas. Spring Framework, microservicios y arquitectura.", image: "https://images.unsplash.com/photo-1517433456452-f9633a875f6f?auto=format&fit=crop&w=600&q=80", rating: 2.5, category: "Backend", price: 40 },
+                { id: 8, title: "Blockchain y Criptomonedas", description: "Entiende la tecnología blockchain y cómo funcionan las criptomonedas hoy en día. Smart contracts y DeFi.", image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80", rating: 4.9, category: "Blockchain", price: 50 }
+            ];
+        }
 
         // ===== Persistencia por usuario (MEJORADO) =====
         function getIdentityKey() {
@@ -241,8 +266,9 @@
             }
             
             // Si no está, agregarlo
-            if (!purchased.includes(courseId)) {
-                purchased.push(courseId);
+            const idStr = String(courseId);
+            if (!purchased.map(String).includes(idStr)) {
+                purchased.push(idStr);
                 localStorage.setItem(key, JSON.stringify(purchased));
                 return true;
             }
@@ -253,7 +279,7 @@
             const key = getIdentityKey();
             try {
                 const stored = localStorage.getItem(key);
-                return stored ? JSON.parse(stored) : [];
+                return stored ? JSON.parse(stored).map(String) : [];
             } catch (e) {
                 return [];
             }
@@ -261,7 +287,7 @@
 
         function isCourseOwned(courseId) {
             const list = getPurchasedList();
-            return list.includes(courseId);
+            return list.includes(String(courseId));
         }
 
         // ===== UI dinámico =====
@@ -333,7 +359,6 @@
         function renderPurchased() {
             const cont = document.getElementById('purchased-container');
             const purchasedIds = getPurchasedList();
-            
             cont.innerHTML = '';
             
             if (purchasedIds.length === 0) {
@@ -346,7 +371,7 @@
             
             // Mostrar solo los cursos comprados
             purchasedIds.forEach(courseId => {
-                const course = courses.find(c => c.id === courseId);
+                const course = courses.find(c => String(c.id) === String(courseId));
                 if (course) {
                     cont.appendChild(courseCard(course, true));
                 }
@@ -356,7 +381,6 @@
         function renderCourses(coursesList) {
             const container = document.getElementById('courses-container');
             container.innerHTML = '';
-            
             coursesList.forEach(course => {
                 // Mostrar todos los cursos (independientemente de si están comprados)
                 container.appendChild(courseCard(course, false));
@@ -367,9 +391,9 @@
             const searchInput = document.getElementById('search-input');
             const searchTerm = (searchInput.value || '').toLowerCase();
             const filtered = courses.filter(course =>
-                course.title.toLowerCase().includes(searchTerm) ||
-                course.description.toLowerCase().includes(searchTerm) ||
-                course.category.toLowerCase().includes(searchTerm)
+                (course.title || '').toString().toLowerCase().includes(searchTerm) ||
+                (course.description || '').toString().toLowerCase().includes(searchTerm) ||
+                (course.category || '').toString().toLowerCase().includes(searchTerm)
             );
             renderCourses(filtered);
         }
@@ -555,6 +579,9 @@
         }
 
         function init() {
+            // cargar cursos persistidos
+            loadCourses();
+            console.log('Academy(cursos): courses after loadCourses ->', courses.length);
             createParticles();
             ensurePublicKeyFromFreighter().finally(() => {
                 renderPurchased();
@@ -587,7 +614,7 @@
 
         function buildShareLink(courseId, token) {
             // Link relativo para abrir directamente la página del curso con el token
-            return `materia.html?id=${courseId}&shared=${encodeURIComponent(token)}`;
+            return `curso-compartido.html?id=${courseId}&shared=${encodeURIComponent(token)}`;
         }
 
         function openShareModal(course) {
@@ -625,7 +652,7 @@
                 const input = document.getElementById('share-input');
                 const relLink = input.value || '';
                 const fullLink = (relLink.startsWith('http') ? relLink : window.location.origin + '/' + relLink);
-                const message = `Te comparto este curso: ${fullLink}`;
+                const message = `Te comparto este curso: ${fullLink}\n\n¡Haz clic para acceder!`;
                 const waNumber = '9532783787';
                 const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
                 window.open(waUrl, '_blank');
@@ -642,7 +669,7 @@
             if (!shared) return;
             try {
                 const decoded = JSON.parse(atob(decodeURIComponent(shared)));
-                const course = courses.find(c => c.id === decoded.courseId);
+                const course = courses.find(c => String(c.id) === String(decoded.courseId));
                 if (!course) return;
                 // Crear banner informativo en la parte superior
                 const banner = document.createElement('div');
